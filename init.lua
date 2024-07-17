@@ -880,9 +880,7 @@ require('lazy').setup({
     dependencies = {
       'nvim-tree/nvim-web-devicons',
     },
-    config = function()
-      require('nvim-tree').setup {}
-    end,
+    opts = {},
   },
   {
     'windwp/nvim-autopairs',
