@@ -109,7 +109,7 @@ vim.opt.termguicolors = true
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
-vim.opt.relativenumber = true
+-- vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -187,10 +187,10 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -310,13 +310,20 @@ require('lazy').setup({
     end,
   },
 
+  -- TODO: do I need this
+  -- {
+  --   'nvim-tree/nvim-web-devicons',
+  --   config = function()
+  --     require('nvim-web-devicons').setup() {}
+  --   end,
+  -- },
+
   -- NOTE: Plugins can specify dependencies.
   --
   -- The dependencies are proper plugin specifications as well - anything
   -- you do for a plugin at the top level, you can do for a dependency.
   --
   -- Use the `dependencies` key to specify the dependencies of a particular plugin
-
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
@@ -583,7 +590,8 @@ require('lazy').setup({
         gopls = {},
         pyright = {},
         -- rust_analyzer = {},
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
+        -- ... etc.
+        -- NOTE: See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
@@ -592,6 +600,7 @@ require('lazy').setup({
         -- tsserver = {},
         --
 
+        yamlls = {},
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -806,7 +815,12 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  {
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
+  },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -884,7 +898,22 @@ require('lazy').setup({
     dependencies = {
       'nvim-tree/nvim-web-devicons',
     },
-    opts = {},
+    opts = {
+      diagnostics = {
+        enable = true,
+      },
+      modified = {
+        enable = true,
+        show_on_dirs = true,
+      },
+      renderer = {
+        icons = {
+          show = {
+            modified = true,
+          },
+        },
+      },
+    },
   },
   {
     'windwp/nvim-autopairs',
@@ -893,6 +922,7 @@ require('lazy').setup({
     -- use opts = {} for passing setup options
     -- this is equalent to setup({}) function
   },
+  -- Golang support
   {
     'ray-x/go.nvim',
     dependencies = { -- optional packages
@@ -907,10 +937,27 @@ require('lazy').setup({
     ft = { 'go', 'gomod' },
     build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
   },
+  -- smooth scroll
   {
     'karb94/neoscroll.nvim',
     config = function()
-      require('neoscroll').setup {}
+      require('neoscroll').setup()
+    end,
+  },
+  -- statusbar
+  -- https://github.com/nvim-lualine/lualine.nvim
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      ---@diagnostic disable-next-line: missing-parameter
+      require('lualine').setup()
+    end,
+  },
+  {
+    'sindrets/diffview.nvim',
+    config = function()
+      require('diffview').setup()
     end,
   },
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
