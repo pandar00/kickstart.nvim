@@ -890,6 +890,7 @@ require('lazy').setup({
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
   },
+  -- NOTE: Search for default key mappings: nvim-tree-mappings-default
   {
     'nvim-tree/nvim-tree.lua',
     version = '*',
