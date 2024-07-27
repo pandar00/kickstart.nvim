@@ -269,6 +269,12 @@ require('lazy').setup({
     },
   },
 
+  {
+    'nvim-tree/nvim-web-devicons',
+    opts = {},
+    lazy = false,
+  },
+
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
   -- This is often very useful to both group configuration, as well as handle
@@ -309,14 +315,6 @@ require('lazy').setup({
       }
     end,
   },
-
-  -- TODO: do I need this
-  -- {
-  --   'nvim-tree/nvim-web-devicons',
-  --   config = function()
-  --     require('nvim-web-devicons').setup() {}
-  --   end,
-  -- },
 
   -- NOTE: Plugins can specify dependencies.
   --
@@ -954,8 +952,12 @@ require('lazy').setup({
       require('lualine').setup()
     end,
   },
+  -- better diff view
   {
     'sindrets/diffview.nvim',
+    dependencies = {
+      { 'nvim-tree/nvim-web-devicons' },
+    },
     config = function()
       require('diffview').setup()
     end,
