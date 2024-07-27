@@ -914,6 +914,11 @@ require('lazy').setup({
         },
       },
     },
+    config = function(_, opts)
+      require('nvim-tree').setup(opts)
+
+      vim.api.nvim_set_keymap('n', '<C-m>', ':NvimTreeToggle<cr>', { desc = 'Toggle nvim-tree', silent = true, noremap = true })
+    end,
   },
   {
     'windwp/nvim-autopairs',
