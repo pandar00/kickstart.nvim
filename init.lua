@@ -978,9 +978,21 @@ require('lazy').setup({
     },
     config = true,
   },
+  -- show lines around scope/indents
   { 'lukas-reineke/indent-blankline.nvim', main = 'ibl', opts = {} },
-
-  -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
+  -- short-cuts to create commonly used snippets
+  { 'rafamadriz/friendly-snippets' },
+  {
+    'L3MON4D3/LuaSnip',
+    -- follow latest release.
+    version = 'v2.*', -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+    -- install jsregexp (optional!).
+    build = 'make install_jsregexp',
+    dependencies = { 'rafamadriz/friendly-snippets' },
+    config = function()
+      require('luasnip.loaders.from_vscode').lazy_load()
+    end,
+  }, -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
 
