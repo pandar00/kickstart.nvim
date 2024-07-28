@@ -890,35 +890,28 @@ require('lazy').setup({
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
   },
-  -- NOTE: Search for default key mappings: nvim-tree-mappings-default
+  -- tree menu
   {
-    'nvim-tree/nvim-tree.lua',
+    'nvim-neo-tree/neo-tree.nvim',
     version = '*',
-    lazy = false,
     dependencies = {
-      'nvim-tree/nvim-web-devicons',
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+      'MunifTanjim/nui.nvim',
+    },
+    cmd = 'Neotree',
+    keys = {
+      { '\\', ':Neotree reveal<CR>', { desc = 'NeoTree reveal' } },
     },
     opts = {
-      diagnostics = {
-        enable = true,
-      },
-      modified = {
-        enable = true,
-        show_on_dirs = true,
-      },
-      renderer = {
-        icons = {
-          show = {
-            modified = true,
+      filesystem = {
+        window = {
+          mappings = {
+            ['\\'] = 'close_window',
           },
         },
       },
     },
-    config = function(_, opts)
-      require('nvim-tree').setup(opts)
-
-      vim.api.nvim_set_keymap('n', '<C-m>', ':NvimTreeToggle<cr>', { desc = 'Toggle nvim-tree', silent = true, noremap = true })
-    end,
   },
   {
     'windwp/nvim-autopairs',
