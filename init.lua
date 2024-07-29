@@ -920,7 +920,8 @@ require('lazy').setup({
     },
     cmd = 'Neotree',
     keys = {
-      { '\\', ':Neotree reveal<CR>', { desc = 'NeoTree reveal' } },
+      -- Do not ask prompt to change cwd
+      { '\\', ':Neotree reveal_force_cwd<CR>', { desc = 'NeoTree reveal' } },
     },
     opts = {
       filesystem = {
@@ -930,6 +931,9 @@ require('lazy').setup({
         window = {
           mappings = {
             ['\\'] = 'close_window',
+            -- TODO: Why adding this slows down open?
+            -- ['o'] = 'open',
+            ['O'] = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'O' } },
           },
         },
       },
@@ -1002,6 +1006,10 @@ require('lazy').setup({
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
 
+  {
+    'christoomey/vim-tmux-navigator',
+    lazy = false,
+  },
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   --
   --  Here are some example plugins that I've included in the Kickstart repository.
