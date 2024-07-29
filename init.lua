@@ -931,7 +931,6 @@ require('lazy').setup({
         window = {
           mappings = {
             ['\\'] = 'close_window',
-            -- TODO: Why adding this slows down open?
             -- ['o'] = 'open',
             ['O'] = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'O' } },
           },
