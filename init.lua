@@ -202,6 +202,9 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- Undotree
+vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -1004,10 +1007,22 @@ require('lazy').setup({
   { 'lukas-reineke/indent-blankline.nvim', main = 'ibl', opts = {} },
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
+  -- place them in the correct locations.
 
+  -- Seamlessly use tmux navigation keys with nvim
   {
     'christoomey/vim-tmux-navigator',
     lazy = false,
+  },
+
+  -- visualize undos
+  {
+    'mbbill/undotree',
+    lazy = false,
+    config = function()
+      -- FIX: Does not appear to work
+      vim.g.undotree_WindowLayout = 1
+    end,
   },
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   --
