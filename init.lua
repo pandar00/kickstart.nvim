@@ -235,6 +235,14 @@ vim.api.nvim_create_autocmd('BufWritePre', {
   group = format_sync_grp,
 })
 
+-- Restore cursor position on file open
+vim.api.nvim_create_autocmd({ 'BufReadPost' }, {
+  pattern = { '*' },
+  callback = function()
+    vim.api.nvim_exec('silent! normal! g`"zv', false)
+    -- vim.cmd("normal: g;")
+  end,
+})
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
@@ -609,6 +617,7 @@ require('lazy').setup({
         -- tsserver = {},
         --
 
+        bashls = {},
         yamlls = {},
         lua_ls = {
           -- cmd = {...},
