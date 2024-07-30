@@ -232,15 +232,16 @@ if not vim.loop.fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+-- NOTE: Do NOT use autogroup to format. Use "conform" plugin to centralize format on save.
 -- Golang specific. go.nvim
-local format_sync_grp = vim.api.nvim_create_augroup('GoFormat', {})
-vim.api.nvim_create_autocmd('BufWritePre', {
-  pattern = '*.go',
-  callback = function()
-    require('go.format').goimports()
-  end,
-  group = format_sync_grp,
-})
+-- local format_sync_grp = vim.api.nvim_create_augroup('GoFormat', {})
+-- vim.api.nvim_create_autocmd('BufWritePre', {
+--   pattern = '*.go',
+--   callback = function()
+--     require('go.format').goimports()
+--   end,
+--   group = format_sync_grp,
+-- })
 
 -- Restore cursor position on file open
 vim.api.nvim_create_autocmd({ 'BufReadPost' }, {
@@ -417,6 +418,7 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
+      vim.keymap.set('n', '<leader>sa', builtin.autocommands, { desc = '[S]earch [A]utocommands' })
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
@@ -700,6 +702,8 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        go = { 'gofumpt', 'goimports' },
+        sh = { 'shellcheck', 'shfmt' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
