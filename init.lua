@@ -207,7 +207,7 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Undotree
-vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
+vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle, { desc = 'Toggle [u]ndotree' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -1035,7 +1035,17 @@ require('lazy').setup({
       'nvim-telescope/telescope.nvim', -- optional
       'ibhagwan/fzf-lua', -- optional
     },
-    config = true,
+    config = function()
+      neogit = require 'neogit'
+      neogit.setup()
+      vim.keymap.set('n', '<leader>g', neogit.open, { desc = '[g]it' })
+      vim.keymap.set('n', '<leader>gc', function()
+        neogit.open { 'commit' }
+      end, { desc = '[g]it [c]ommit' })
+      vim.keymap.set('n', '<leader>gl', function()
+        neogit.open { 'log' }
+      end, { desc = '[g]it [l]og' })
+    end,
   },
   -- show lines around scope/indents
   { 'lukas-reineke/indent-blankline.nvim', main = 'ibl', opts = {} },
