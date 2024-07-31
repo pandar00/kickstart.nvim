@@ -247,6 +247,7 @@ vim.opt.rtp:prepend(lazypath)
 vim.api.nvim_create_autocmd({ 'BufReadPost' }, {
   pattern = { '*' },
   callback = function()
+    ---@diagnostic disable-next-line: deprecated
     vim.api.nvim_exec('silent! normal! g`"zv', false)
     -- vim.cmd("normal: g;")
   end,
@@ -1036,7 +1037,7 @@ require('lazy').setup({
       'ibhagwan/fzf-lua', -- optional
     },
     config = function()
-      neogit = require 'neogit'
+      local neogit = require 'neogit'
       neogit.setup()
       vim.keymap.set('n', '<leader>g', neogit.open, { desc = '[g]it' })
       vim.keymap.set('n', '<leader>gc', function()
@@ -1044,7 +1045,7 @@ require('lazy').setup({
       end, { desc = '[g]it [c]ommit' })
       vim.keymap.set('n', '<leader>gl', function()
         neogit.open { 'log' }
-      end, { desc = '[g]it [l]og' })
+      end, { desc = '[g]it [l]' })
     end,
   },
   -- show lines around scope/indents
