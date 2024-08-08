@@ -627,6 +627,8 @@ require('lazy').setup({
         -- tsserver = {},
         --
 
+        tsserver = {},
+        svelte = {},
         zls = {},
         bashls = {},
         yamlls = {},
@@ -634,6 +636,35 @@ require('lazy').setup({
           -- cmd = {...},
           -- filetypes = { ...},
           -- capabilities = {},
+          -- Copied from https://raw.githubusercontent.com/neovim/nvim-lspconfig/master/lua/lspconfig/server_configurations/lua_ls.lua
+          -- to override root path search.
+          -- Some projects places "root_files" below to the repository root but
+          -- the source is placed somewhere else (i.e. in /lua)
+          root_dir = function(fname)
+            local util = require 'lspconfig.util'
+            local root_files = {
+              -- FIXME: workaround for go.nvim repo
+              'go.lua',
+              '.luarc.json',
+              '.luarc.jsonc',
+              '.luacheckrc',
+              '.stylua.toml',
+              'stylua.toml',
+              'selene.toml',
+              'selene.yml',
+            }
+            -- root_pattern() traverses up the parent directory and finds each of the
+            -- "root_files" and returns the first matching root directory
+            local root = util.root_pattern(unpack(root_files))(fname)
+            if root and root ~= vim.env.HOME then
+              return root
+            end
+            root = util.root_pattern 'lua/'(fname)
+            if root then
+              return root
+            end
+            return util.find_git_ancestor(fname)
+          end,
           settings = {
             Lua = {
               completion = {

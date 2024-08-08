@@ -227,3 +227,10 @@ sudo pacman -S --noconfirm --needed gcc make git ripgrep fd unzip neovim
 ```
 </details>
 
+
+# TODO
+[ ] Make :GoRun not focus on the new window
+[ ] Git/neogit. Iterate hunks and undo 
+[ ] Disable capslock? 
+[ ] Sort selected lines
+[ ] Undotree to use new diffview
