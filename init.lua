@@ -998,7 +998,15 @@ require('lazy').setup({
       'nvim-treesitter/nvim-treesitter',
     },
     config = function()
-      require('go').setup()
+      require('go').setup {
+        -- Verbose writes log to $HOME/tmp/gonvim.log. Ideally it should write to
+        -- $HOME/.cache/* like the other logs
+        -- verbose = true,
+
+        -- Write to floatterm. Setting it false writes to quickfix list which causes
+        -- weired issue where :GoRun<cr> opens a command window and then another in quickfix list
+        run_in_floaterm = true,
+      }
     end,
     event = { 'CmdlineEnter' },
     ft = { 'go', 'gomod' },
