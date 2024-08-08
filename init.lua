@@ -980,6 +980,7 @@ require('lazy').setup({
           },
         },
       },
+      sources = { 'filesystem', 'git_status', 'document_symbols' },
     },
   },
   {
