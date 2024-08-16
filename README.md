@@ -229,11 +229,27 @@ sudo pacman -S --noconfirm --needed gcc make git ripgrep fd unzip neovim
 
 
 # TODO
-[X] Make :GoRun not focus on the new window
-[ ] Git/neogit. Iterate hunks and undo 
-[ ] Disable capslock? 
-[ ] Sort selected lines
-[ ] Undotree to use new diffview
-[ ] Neotree
-    [ ] document symbols
-    [ ] document symbols key binding
+[X] Show the symbol hierarchy in the status bar
+[ ] Golang
+  [ ] status bar to show current package/module
+  [X] Make :GoRun not focus on the new window
+    [ ] Back to run in a separate pinned window
+[X] Folds using ~~treesitter~~LSP
+[ ] Undotree
+  [X] Window orientation
+  [ ] Splits causing width issues with neotree
+  [ ] Undotree location gets saved in jumplist and causes issue if buffer no longer exists
+[ ] Git
+  [ ] Git history on a selection
+  [ ] Neotree git_status to open in diffview
+  [ ] Get familiar with merge
+[ ] Code Lens
+[X] Neotree
+  [X] document symbols
+  [X] document symbols key binding
+[ ] Misc
+  [ ] Sort selected lines
+  [ ] Opening a file should change the cwd to file's directory
+  [ ] Capslock
+  [ ] Telescope
+    [ ] Shorten the results if too long

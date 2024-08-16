@@ -151,7 +151,9 @@ vim.opt.splitbelow = true
 --  See `:help 'list'`
 --  and `:help 'listchars'`
 vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+-- initial value
+-- vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+-- vim.opt.listchars = { trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -189,7 +191,7 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 --
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+-- vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -207,7 +209,31 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Undotree
-vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle, { desc = 'Toggle [u]ndotree' })
+vim.keymap.set('n', '<F4>', function()
+  -- source vim script
+  -- let targetWinnr = -1
+  -- for winnr in range(1, winnr('$')) "winnr starts from 1
+  --     if (getwinvar(winnr,'undotree_id') == a:targetid)
+  --                 \&& winbufnr(winnr) == a:targetBufnr
+  --         let targetWinnr = winnr
+  --     endif
+  -- endfor
+  -- if targetWinnr == -1
+  --     return
+  -- endif
+  vim.cmd.UndotreeToggle()
+  -- option 1. reset width on reopen
+  -- option 2. do not allow neotree and undotree to open at the same time
+  -- for _, win in pairs(vim.api.nvim_tabpage_list_wins(0)) do
+  --   print(vim.inspect(win))
+  --   print(vim.w[win].undotree_id)
+  --   if vim.w[win].undotree_id ~= nil then
+  --     vim.w[win].width = 30
+  --     print(vim.w[win].undotree_id .. 'setting width' .. 40)
+  --     --   vim.api.nvim_win_set_width(win, 40)
+  --   end
+  -- end
+end, { desc = 'Toggle [u]ndotree' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -242,7 +268,6 @@ vim.opt.rtp:prepend(lazypath)
 --   end,
 --   group = format_sync_grp,
 -- })
-
 -- Restore cursor position on file open
 vim.api.nvim_create_autocmd({ 'BufReadPost' }, {
   pattern = { '*' },
@@ -396,15 +421,23 @@ require('lazy').setup({
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+      local actions = require 'telescope.actions'
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
+        defaults = {
+          mappings = {
+            -- Make selection open in a vertical mode. Default is horizontal mode
+            -- i = {
+            --   -- [C-x] for horitonzel select
+            --   ['<cr>'] = actions.select_vertical,
+            -- },
+            -- n = {
+            --   ['<cr>'] = actions.select_vertical,
+            -- },
+          },
+        },
         -- pickers = {}
         extensions = {
           ['ui-select'] = {
@@ -421,6 +454,8 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sa', builtin.autocommands, { desc = '[S]earch [A]utocommands' })
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+      vim.keymap.set('n', '<leader>si', builtin.highlights, { desc = '[S]earch h[i]ghlight' })
+      vim.keymap.set('n', '<leader>sc', builtin.colorscheme, { desc = '[S]earch [c]olorscheme' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
@@ -428,17 +463,19 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+      vim.keymap.set('n', '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '<leader>/', function()
-        -- You can pass additional configuration to Telescope to change the theme, layout, etc.
-        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 10,
-          previewer = false,
-        })
-      end, { desc = '[/] Fuzzily search in current buffer' })
+      vim.keymap.set('n', '<leader>/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
+      -- vim.keymap.set('n', '<leader>/', function()
+      --   -- You can pass additional configuration to Telescope to change the theme, layout, etc.
+      --   builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+      --     winblend = 10,
+      --     -- previewer = false,
+      --   })
+      -- end, { desc = '[/] Fuzzily search in current buffer' })
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
@@ -602,6 +639,12 @@ require('lazy').setup({
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      -- Neovim hasn't added foldingRange to default capabilities, users must add it manually
+      -- See https://github.com/kevinhwang91/nvim-ufo
+      capabilities.textDocument.foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true,
+      }
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -614,6 +657,8 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         clangd = {},
+        -- See https://github.com/golang/tools/blob/master/gopls/doc/features/README.md
+        -- for all gopls features
         gopls = {},
         pyright = {},
         -- rust_analyzer = {},
@@ -627,6 +672,8 @@ require('lazy').setup({
         -- tsserver = {},
         --
 
+        -- Markdown
+        marksman = {},
         tsserver = {},
         svelte = {},
         zls = {},
@@ -654,6 +701,7 @@ require('lazy').setup({
               'selene.yml',
             }
             -- root_pattern() traverses up the parent directory and finds each of the
+            -- what if this thisng that
             -- "root_files" and returns the first matching root directory
             local root = util.root_pattern(unpack(root_files))(fname)
             if root and root ~= vim.env.HOME then
@@ -965,7 +1013,10 @@ require('lazy').setup({
     cmd = 'Neotree',
     keys = {
       -- Do not ask prompt to change cwd
-      { '\\', ':Neotree reveal_force_cwd<CR>', { desc = 'NeoTree reveal' } },
+      -- '//' on close is mapped per window below
+      { '<F1>', ':Neotree reveal_force_cwd toggle<CR>', { desc = 'NeoTree reveal' } },
+      { '<F2>', ':Neotree document_symbols toggle<CR>', { desc = 'Neotree document symbols' } },
+      { '<F3>', ':Neotree git_status toggle<CR>', { desc = 'Neotree git status' } },
     },
     opts = {
       filesystem = {
@@ -974,7 +1025,6 @@ require('lazy').setup({
         },
         window = {
           mappings = {
-            ['\\'] = 'close_window',
             -- ['o'] = 'open',
             ['O'] = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'O' } },
           },
@@ -1046,15 +1096,90 @@ require('lazy').setup({
       end
     end,
   },
-  -- statusbar
+  -- status bar
   -- https://github.com/nvim-lualine/lualine.nvim
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       ---@diagnostic disable-next-line: missing-parameter
-      require('lualine').setup()
+      require('lualine').setup {
+        sections = {
+          lualine_x = {
+            'encoding',
+            'fileformat',
+            'filetype',
+            {
+              -- https://github.com/jdhao/nvim-config/blob/a602d9881982ec209218299bad200c98f53b2259/lua/config/lualine.lua#L206
+              function()
+                local msg = 'No Active Lsp'
+                local buf_ft = vim.api.nvim_get_option_value('filetype', {})
+                local clients = vim.lsp.get_clients { bufnr = 0 }
+                if next(clients) == nil then
+                  return msg
+                end
+
+                for _, client in ipairs(clients) do
+                  ---@diagnostic disable-next-line: undefined-field
+                  local filetypes = client.config.filetypes
+                  if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
+                    return client.name
+                  end
+                end
+                return msg
+              end,
+            },
+          },
+          lualine_c = {
+            { 'filename' },
+            {
+              function()
+                local ts = require 'nvim-treesitter'
+                -- nvim-treesitter ships with one
+                return ts.statusline {
+                  type_patterns = {
+                    'class',
+                    -- 'function' is too broad
+                    'function_definition', -- Lua
+                    'method',
+
+                    -- Golang
+                    'type_declaration',
+                    'function_declaration',
+                    'func_literal',
+                    -- End of Golang
+                  },
+                  separator = '  ',
+                  allow_duplicates = true,
+                  transform_fn = function(line)
+                    line = line:gsub('%s*[%[%(%{]*%s*$', '')
+                    -- function A()         -> fn A()
+                    -- function()           -> fn ()
+                    -- func (a b) MyFunc()  -> fn (a b) MyFunc()
+                    -- func ()              -> fn ()
+                    -- Lua pattern isn't a proper regex and cannot support OR
+                    line, n = line:gsub('function', 'fn')
+                    if n == 0 then
+                      line = line:gsub('func', 'fn')
+                    end
+                    return line
+                  end,
+                }
+              end,
+              color = { gui = 'italic' },
+              fmt = function(line, _)
+                if line == nil or line == 'nil' then
+                  return ''
+                end
+                return line
+              end,
+            },
+          },
+        },
+        extensions = { 'neo-tree' },
+      }
     end,
+    opts = {},
   },
   -- better diff view
   {
@@ -1064,33 +1189,19 @@ require('lazy').setup({
     },
     config = function()
       require('diffview').setup()
-    end,
-  },
-
-  {
-    'NeogitOrg/neogit',
-    dependencies = {
-      'nvim-lua/plenary.nvim', -- required
-      'sindrets/diffview.nvim', -- optional - Diff integration
-
-      -- Only one of these is needed, not both.
-      'nvim-telescope/telescope.nvim', -- optional
-      'ibhagwan/fzf-lua', -- optional
-    },
-    config = function()
-      local neogit = require 'neogit'
-      neogit.setup()
-      vim.keymap.set('n', '<leader>g', neogit.open, { desc = '[g]it' })
-      vim.keymap.set('n', '<leader>gc', function()
-        neogit.open { 'commit' }
-      end, { desc = '[g]it [c]ommit' })
-      vim.keymap.set('n', '<leader>gl', function()
-        neogit.open { 'log' }
-      end, { desc = '[g]it [l]' })
+      vim.keymap.set('n', '<leader>g', ':DiffviewOpen<CR>', { desc = 'Show diagnostic [E]rror messages' })
     end,
   },
   -- show lines around scope/indents
-  { 'lukas-reineke/indent-blankline.nvim', main = 'ibl', opts = {} },
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+    opts = {
+      indent = {
+        tab_char = { '▎' },
+      },
+    },
+  },
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
   -- place them in the correct locations.
@@ -1100,14 +1211,96 @@ require('lazy').setup({
     'christoomey/vim-tmux-navigator',
     lazy = false,
   },
-
+  -- nvim v0.8.0
+  {
+    'kdheepak/lazygit.nvim',
+    cmd = {
+      'LazyGit',
+      'LazyGitConfig',
+      'LazyGitCurrentFile',
+      'LazyGitFilter',
+      'LazyGitFilterCurrentFile',
+    },
+    -- optional for floating window border decoration
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+    -- setting the keybinding for LazyGit with 'keys' is recommended in
+    -- order to load the plugin when the command is run for the first time
+    keys = {
+      { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
+    },
+    config = function()
+      vim.g.lazygit_floating_window_scaling_factor = 1 -- fullscreen
+      require('telescope').load_extension 'lazygit'
+      -- code
+    end,
+  },
   -- visualize undos
   {
     'mbbill/undotree',
     lazy = false,
     config = function()
-      -- FIX: Does not appear to work
-      vim.g.undotree_WindowLayout = 1
+      vim.g.undotree_SplitWidth = 40
+      vim.g.undotree_DiffpanelHeight = 20
+      vim.g.undotree_WindowLayout = 2
+      vim.g.undotree_SetFocusWhenToggle = 1
+    end,
+  },
+  -- better folding
+  {
+    'kevinhwang91/nvim-ufo',
+    dependencies = {
+      'neovim/nvim-lspconfig',
+      'kevinhwang91/promise-async',
+    },
+    event = 'VeryLazy',
+    opts = {},
+    init = function()
+      vim.o.foldcolumn = '1' -- '0' is not bad
+      vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+      vim.o.foldlevelstart = 99
+      vim.o.foldenable = true
+    end,
+    config = function()
+      local ufo = require 'ufo'
+      -- https://github.com/jdhao/nvim-config/blob/6e60475f3f956ee4b7a2a2deea47f44d9676ed9a/lua/config/nvim_ufo.lua
+      local handler = function(virtText, lnum, endLnum, width, truncate)
+        local newVirtText = {}
+        local foldedLines = endLnum - lnum
+        local suffix = (' 󰁂  %d'):format(foldedLines)
+        local sufWidth = vim.fn.strdisplaywidth(suffix)
+        local targetWidth = width - sufWidth
+        local curWidth = 0
+
+        for _, chunk in ipairs(virtText) do
+          local chunkText = chunk[1]
+          local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+          if targetWidth > curWidth + chunkWidth then
+            table.insert(newVirtText, chunk)
+          else
+            chunkText = truncate(chunkText, targetWidth - curWidth)
+            local hlGroup = chunk[2]
+            table.insert(newVirtText, { chunkText, hlGroup })
+            chunkWidth = vim.fn.strdisplaywidth(chunkText)
+            -- str width returned from truncate() may less than 2nd argument, need padding
+            if curWidth + chunkWidth < targetWidth then
+              suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
+            end
+            break
+          end
+          curWidth = curWidth + chunkWidth
+        end
+        local rAlignAppndx = math.max(math.min(vim.opt.textwidth['_value'], width - 1) - curWidth - sufWidth, 0)
+        suffix = (' '):rep(rAlignAppndx) .. suffix
+        table.insert(newVirtText, { suffix, 'MoreMsg' })
+        return newVirtText
+      end
+      ufo.setup {
+        fold_virt_text_handler = handler,
+      }
+      vim.keymap.set('n', 'zR', ufo.openAllFolds)
+      vim.keymap.set('n', 'zM', ufo.closeAllFolds)
     end,
   },
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
