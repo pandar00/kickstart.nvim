@@ -1326,6 +1326,7 @@ require('lazy').setup({
         table.insert(newVirtText, { suffix, 'MoreMsg' })
         return newVirtText
       end
+      ---@diagnostic disable-next-line: missing-fields
       ufo.setup {
         fold_virt_text_handler = handler,
       }
