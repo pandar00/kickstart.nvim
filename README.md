@@ -230,6 +230,9 @@ sudo pacman -S --noconfirm --needed gcc make git ripgrep fd unzip neovim
 
 # TODO
 [X] Show the symbol hierarchy in the status bar
+[ ] Auto reopen reopen previous state
+[X] Border around floating windows
+[X] Open help menues in vertical mode
 [ ] Golang
   [ ] status bar to show current package/module
   [X] Make :GoRun not focus on the new window
@@ -247,9 +250,10 @@ sudo pacman -S --noconfirm --needed gcc make git ripgrep fd unzip neovim
 [X] Neotree
   [X] document symbols
   [X] document symbols key binding
+[ ] Neotree
+  [ ] Opening a file should change the cwd to file's directory
+[ ] Telescope
+  [ ] Shorten the results if too long
 [ ] Misc
   [ ] Sort selected lines
-  [ ] Opening a file should change the cwd to file's directory
   [ ] Capslock
-  [ ] Telescope
-    [ ] Shorten the results if too long
