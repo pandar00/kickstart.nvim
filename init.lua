@@ -236,6 +236,24 @@ vim.keymap.set('n', '<F4>', function()
   --   end
   -- end
 end, { desc = 'Toggle [u]ndotree' })
+-- borders around floating text
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
+  -- Use a sharp border with `FloatBorder` highlights
+  -- See nvim-open-win
+  border = 'rounded',
+  max_width = 80,
+})
+vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.hover, {
+  -- Use a sharp border with `FloatBorder` highlights
+  -- See nvim-open-win
+  border = 'rounded',
+  max_width = 80,
+})
+vim.diagnostic.config {
+  float = {
+    border = 'rounded',
+  },
+}
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
