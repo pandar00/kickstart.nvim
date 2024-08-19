@@ -257,6 +257,15 @@ vim.diagnostic.config {
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
+-- Show diagnostics on hover
+-- https://github.com/neovim/nvim-lspconfig/wiki/UI-Customization
+-- vim.o.updatetime = 250
+-- vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+--   group = vim.api.nvim_create_augroup('float_diagnostic', { clear = true }),
+--   callback = function()
+--     vim.diagnostic.open_float(nil, { focus = false })
+--   end,
+-- })
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
