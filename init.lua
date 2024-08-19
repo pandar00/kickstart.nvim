@@ -1261,6 +1261,7 @@ require('lazy').setup({
     },
     config = function()
       vim.g.lazygit_floating_window_scaling_factor = 1 -- fullscreen
+      vim.g.lazygit_floating_window_use_plenary = 1 -- use plenary.nvim to manage floating window if available
       require('telescope').load_extension 'lazygit'
       -- code
     end,
