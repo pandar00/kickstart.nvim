@@ -455,19 +455,19 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        defaults = {
-          mappings = {
-            -- Make selection open in a vertical mode. Default is horizontal mode
-            -- i = {
-            --   -- [C-x] for horitonzel select
-            --   ['<cr>'] = actions.select_vertical,
-            -- },
-            -- n = {
-            --   ['<cr>'] = actions.select_vertical,
-            -- },
+        pickers = {
+          help_tags = {
+            mappings = {
+              i = {
+                ['<cr>'] = actions.select_vertical,
+              },
+
+              n = {
+                ['<cr>'] = actions.select_vertical,
+              },
+            },
           },
         },
-        -- pickers = {}
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
