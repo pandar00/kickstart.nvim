@@ -211,7 +211,7 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Undotree
-vim.keymap.set('n', '<F4>', function()
+vim.keymap.set('n', '<C-F4>', function()
   -- source vim script
   -- let targetWinnr = -1
   -- for winnr in range(1, winnr('$')) "winnr starts from 1
@@ -1047,9 +1047,9 @@ require('lazy').setup({
     keys = {
       -- Do not ask prompt to change cwd
       -- '//' on close is mapped per window below
-      { '<F1>', ':Neotree reveal_force_cwd toggle<CR>', { desc = 'NeoTree reveal' } },
-      { '<F2>', ':Neotree document_symbols toggle<CR>', { desc = 'Neotree document symbols' } },
-      { '<F3>', ':Neotree git_status toggle<CR>', { desc = 'Neotree git status' } },
+      { '<C-F1>', ':Neotree reveal_force_cwd toggle<CR>', { desc = 'NeoTree reveal' } },
+      { '<C-F2>', ':Neotree document_symbols toggle<CR>', { desc = 'Neotree document symbols' } },
+      { '<C-F3>', ':Neotree git_status toggle<CR>', { desc = 'Neotree git status' } },
     },
     opts = {
       filesystem = {
