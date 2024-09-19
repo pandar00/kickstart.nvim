@@ -698,9 +698,7 @@ require('lazy').setup({
         zls = {},
         bashls = {},
         yamlls = {},
-        terraformls = {
-          filetypes = { 'tf' },
-        },
+        terraformls = {},
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -813,7 +811,7 @@ require('lazy').setup({
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
         -- javascript = { { "prettierd", "prettier" } },
-        tf = { 'terragrunt_hclfmt' },
+        terraform = { 'terraform_fmt' },
       },
     },
   },
