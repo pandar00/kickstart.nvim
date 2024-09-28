@@ -694,9 +694,12 @@ require('lazy').setup({
         -- Markdown
         marksman = {},
         tsserver = {},
+        tailwindcss = {},
         svelte = {},
         zls = {},
         bashls = {},
+        dockerls = {},
+        docker_compose_language_service = {},
         yamlls = {},
         terraformls = {},
         lua_ls = {
@@ -807,6 +810,10 @@ require('lazy').setup({
         sh = { 'shellcheck', 'shfmt' },
         -- Conform can also run multiple formatters sequentially
         python = { 'isort', 'black' },
+        css = { 'prettier' },
+
+        yaml = { 'yamlfmt' },
+        typescript = { 'prettier' },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
@@ -1053,6 +1060,13 @@ require('lazy').setup({
       filesystem = {
         filtered_items = {
           hide_dotfiles = false,
+          hide_gitignored = false,
+          hide_by_name = {
+            '.git',
+            '.terraform',
+            '.terraform.lock.hcl',
+            'node_modules',
+          },
         },
         window = {
           mappings = {
@@ -1220,7 +1234,8 @@ require('lazy').setup({
     },
     config = function()
       require('diffview').setup()
-      vim.keymap.set('n', '<leader>g', ':DiffviewOpen<CR>', { desc = 'Show diagnostic [E]rror messages' })
+      -- FIXME: Get diffview working
+      -- vim.keymap.set('n', '<leader>g', ':DiffviewOpen<CR>', { desc = 'Show diagnostic [E]rror messages' })
     end,
   },
   -- show lines around scope/indents
