@@ -181,6 +181,9 @@ vim.opt.colorcolumn = '100'
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+-- <C-c> causes lua scripts to abort
+vim.keymap.set('i', '<C-c>', '<esc>')
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
@@ -441,10 +444,20 @@ require('lazy').setup({
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       local actions = require 'telescope.actions'
+      local action_layout = require 'telescope.actions.layout'
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
+        defaults = {
+          mappings = {
+            i = {
+              ['<esc>'] = actions.close,
+              -- Alt-p. We are always in insert mode in telescope because <esc> is mapped to close
+              -- ['<M-p>'] = action_layout.toggle_preview,
+            },
+          },
+        },
         pickers = {
           help_tags = {
             mappings = {
@@ -693,14 +706,26 @@ require('lazy').setup({
 
         -- Markdown
         marksman = {},
-        tsserver = {},
+        -- tsserver = {},
         tailwindcss = {},
         svelte = {},
         zls = {},
         bashls = {},
         dockerls = {},
         docker_compose_language_service = {},
-        yamlls = {},
+        yamlls = {
+          settings = {
+            yaml = {
+              -- schemaStore = {
+              --   enable = false,
+              -- },
+              -- schemas = {
+              --   ['https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/v1.18.0-standalone-strict/all.json'] = 'k8s.yaml',
+              --   ['/path/from/root/of/project'] = '/.github/workflows/*',
+              -- },
+            },
+          },
+        },
         terraformls = {},
         lua_ls = {
           -- cmd = {...},
@@ -846,7 +871,9 @@ require('lazy').setup({
           {
             'rafamadriz/friendly-snippets',
             config = function()
-              require('luasnip.loaders.from_vscode').lazy_load()
+              -- require('luasnip.loaders.from_vscode').lazy_load()
+              require('luasnip.loaders.from_vscode').lazy_load { exclude = { 'go' } }
+              require('luasnip.loaders.from_vscode').load { paths = { './snippets' } }
             end,
           },
         },
@@ -936,9 +963,35 @@ require('lazy').setup({
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
         },
         sources = {
-          { name = 'nvim_lsp' },
-          { name = 'luasnip' },
-          { name = 'path' },
+          { name = 'nvim_lsp', group_index = 2 },
+          { name = 'copilot', group_index = 2 },
+          { name = 'luasnip', group_index = 2 },
+          { name = 'path', group_index = 2 },
+        },
+
+        -- Other examples
+        -- https://github.com/xero/dotfiles/blob/a48855d2a06d0fecec85e02b72139e4e2b5fff6e/neovim/.config/nvim/lua/plugins/copilot.lua#L216
+        -- https://github.com/xero/dotfiles/blob/a48855d2a06d0fecec85e02b72139e4e2b5fff6e/neovim/.config/nvim/lua/plugins/cmp.lua#L49
+        -- -------------------------------------
+        -- Codeium?
+        -- https://github.com/ecosse3/nvim/blob/344706db1ad7c0cf7112714dd50eadc647fb81fc/lua/plugins/cmp.lua#L125
+        sorting = {
+          priority_weight = 2,
+          comparators = {
+            require('copilot_cmp.comparators').prioritize,
+
+            -- Below is the default comparitor list and order for nvim-cmp
+            cmp.config.compare.offset,
+            -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+            cmp.config.compare.exact,
+            cmp.config.compare.score,
+            cmp.config.compare.recently_used,
+            cmp.config.compare.locality,
+            cmp.config.compare.kind,
+            cmp.config.compare.sort_text,
+            cmp.config.compare.length,
+            cmp.config.compare.order,
+          },
         },
       }
     end,
@@ -1087,11 +1140,19 @@ require('lazy').setup({
   },
   -- Golang support
   {
+    -- Doc is go-nvim
     'ray-x/go.nvim',
     dependencies = { -- optional packages
       'ray-x/guihua.lua',
       'neovim/nvim-lspconfig',
       'nvim-treesitter/nvim-treesitter',
+    },
+    keys = {
+      { '<leader>gt', '<cmd>GoTest -n<cr>', desc = '[G]o [T]est' },
+      { '<leader>gp', '<cmd>GoTest -p<cr>', desc = '[G]o Test Current [P]ackage' },
+      { '<leader>gl', '<cmd>GoLint<cr>', desc = '[G]o [L]int' },
+      { '<leader>gf', '<cmd>GoFillStruct<cr>', desc = '[G]o [F]ill struct' },
+      { '<leader>gc', '<cmd>GoTermClose<cr>', desc = '[G]o Term [C]lose' },
     },
     config = function()
       require('go').setup {
@@ -1101,7 +1162,8 @@ require('lazy').setup({
 
         -- Write to floatterm. Setting it false writes to quickfix list which causes
         -- weired issue where :GoRun<cr> opens a command window and then another in quickfix list
-        run_in_floaterm = true,
+        -- FIXME: floaterm and quickfix both are looking odd
+        -- run_in_floaterm = true,
       }
     end,
     event = { 'CmdlineEnter' },
@@ -1129,10 +1191,10 @@ require('lazy').setup({
       -- Override mappings with custom duration.
       local mapping_funcs = {
         ['<C-u>'] = function()
-          neoscroll.ctrl_u { duration = 115 }
+          neoscroll.ctrl_u { duration = 80 }
         end,
         ['<C-d>'] = function()
-          neoscroll.ctrl_d { duration = 115 }
+          neoscroll.ctrl_d { duration = 80 }
         end,
       }
       local modes = { 'n', 'v', 'x' }
@@ -1294,63 +1356,109 @@ require('lazy').setup({
       vim.g.undotree_SetFocusWhenToggle = 1
     end,
   },
+  -- TODO: Causing errors on C-c. https://github.com/kevinhwang91/nvim-ufo/issues/202
   -- better folding
+  -- {
+  --   'kevinhwang91/nvim-ufo',
+  --   dependencies = {
+  --     'neovim/nvim-lspconfig',
+  --     'kevinhwang91/promise-async',
+  --   },
+  --   event = 'VeryLazy',
+  --   opts = {},
+  --   init = function()
+  --     vim.o.foldcolumn = '1' -- '0' is not bad
+  --     vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+  --     vim.o.foldlevelstart = 99
+  --     vim.o.foldenable = true
+  --   end,
+  --   config = function()
+  --     local ufo = require 'ufo'
+  --     -- https://github.com/jdhao/nvim-config/blob/6e60475f3f956ee4b7a2a2deea47f44d9676ed9a/lua/config/nvim_ufo.lua
+  --     local handler = function(virtText, lnum, endLnum, width, truncate)
+  --       local newVirtText = {}
+  --       local foldedLines = endLnum - lnum
+  --       local suffix = (' 󰁂  %d'):format(foldedLines)
+  --       local sufWidth = vim.fn.strdisplaywidth(suffix)
+  --       local targetWidth = width - sufWidth
+  --       local curWidth = 0
+  --
+  --       for _, chunk in ipairs(virtText) do
+  --         local chunkText = chunk[1]
+  --         local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+  --         if targetWidth > curWidth + chunkWidth then
+  --           table.insert(newVirtText, chunk)
+  --         else
+  --           chunkText = truncate(chunkText, targetWidth - curWidth)
+  --           local hlGroup = chunk[2]
+  --           table.insert(newVirtText, { chunkText, hlGroup })
+  --           chunkWidth = vim.fn.strdisplaywidth(chunkText)
+  --           -- str width returned from truncate() may less than 2nd argument, need padding
+  --           if curWidth + chunkWidth < targetWidth then
+  --             suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
+  --           end
+  --           break
+  --         end
+  --         curWidth = curWidth + chunkWidth
+  --       end
+  --       local rAlignAppndx = math.max(math.min(vim.opt.textwidth['_value'], width - 1) - curWidth - sufWidth, 0)
+  --       suffix = (' '):rep(rAlignAppndx) .. suffix
+  --       table.insert(newVirtText, { suffix, 'MoreMsg' })
+  --       return newVirtText
+  --     end
+  --     ---@diagnostic disable-next-line: missing-fields
+  --     ufo.setup {
+  --       fold_virt_text_handler = handler,
+  --     }
+  --     vim.keymap.set('n', 'zR', ufo.openAllFolds)
+  --     vim.keymap.set('n', 'zM', ufo.closeAllFolds)
+  --   end,
+  -- },
   {
-    'kevinhwang91/nvim-ufo',
-    dependencies = {
-      'neovim/nvim-lspconfig',
-      'kevinhwang91/promise-async',
-    },
-    event = 'VeryLazy',
+    'zbirenbaum/copilot.lua',
+    cmd = 'Copilot',
+    event = 'InsertEnter',
     opts = {},
-    init = function()
-      vim.o.foldcolumn = '1' -- '0' is not bad
-      vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-      vim.o.foldlevelstart = 99
-      vim.o.foldenable = true
-    end,
     config = function()
-      local ufo = require 'ufo'
-      -- https://github.com/jdhao/nvim-config/blob/6e60475f3f956ee4b7a2a2deea47f44d9676ed9a/lua/config/nvim_ufo.lua
-      local handler = function(virtText, lnum, endLnum, width, truncate)
-        local newVirtText = {}
-        local foldedLines = endLnum - lnum
-        local suffix = (' 󰁂  %d'):format(foldedLines)
-        local sufWidth = vim.fn.strdisplaywidth(suffix)
-        local targetWidth = width - sufWidth
-        local curWidth = 0
-
-        for _, chunk in ipairs(virtText) do
-          local chunkText = chunk[1]
-          local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-          if targetWidth > curWidth + chunkWidth then
-            table.insert(newVirtText, chunk)
-          else
-            chunkText = truncate(chunkText, targetWidth - curWidth)
-            local hlGroup = chunk[2]
-            table.insert(newVirtText, { chunkText, hlGroup })
-            chunkWidth = vim.fn.strdisplaywidth(chunkText)
-            -- str width returned from truncate() may less than 2nd argument, need padding
-            if curWidth + chunkWidth < targetWidth then
-              suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
-            end
-            break
-          end
-          curWidth = curWidth + chunkWidth
-        end
-        local rAlignAppndx = math.max(math.min(vim.opt.textwidth['_value'], width - 1) - curWidth - sufWidth, 0)
-        suffix = (' '):rep(rAlignAppndx) .. suffix
-        table.insert(newVirtText, { suffix, 'MoreMsg' })
-        return newVirtText
-      end
-      ---@diagnostic disable-next-line: missing-fields
-      ufo.setup {
-        fold_virt_text_handler = handler,
+      require('copilot').setup {
+        suggestion = { enabled = false },
+        panel = { enabled = false },
       }
-      vim.keymap.set('n', 'zR', ufo.openAllFolds)
-      vim.keymap.set('n', 'zM', ufo.closeAllFolds)
     end,
   },
+  {
+    'zbirenbaum/copilot-cmp',
+    config = function()
+      require('copilot_cmp').setup()
+    end,
+  },
+  -- {
+  --   'nvim-cmp',
+  --   dependencies = {
+  --     {
+  --       'zbirenbaum/copilot-cmp',
+  --       dependencies = 'copilot.lua',
+  --       opts = {},
+  --       config = function(_, opts)
+  --         local copilot_cmp = require 'copilot_cmp'
+  --         copilot_cmp.setup(opts)
+  --         -- attach cmp source whenever copilot attaches
+  --         -- fixes lazy-loading issues with the copilot cmp source
+  --         vim.lsp.on_attach(function(client)
+  --           copilot_cmp._on_insert_enter {}
+  --         end, 'copilot')
+  --       end,
+  --     },
+  --   },
+  --   ---@param opts cmp.ConfigSchema
+  --   opts = function(_, opts)
+  --     table.insert(opts.sources, 1, {
+  --       name = 'copilot',
+  --       group_index = 1,
+  --       priority = 100,
+  --     })
+  --   end,
+  -- },
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   --
   --  Here are some example plugins that I've included in the Kickstart repository.
