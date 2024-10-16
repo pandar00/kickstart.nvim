@@ -134,6 +134,8 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+vim.keymap.set('n', '<C-F1>', ':NvimTreeToggle<CR>')
+
 -- Undotree
 -- https://github.com/mbbill/undotree
 vim.keymap.set('n', '<C-F4>', function()
@@ -356,7 +358,7 @@ require('lazy').setup({
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
-
+      local exts = require('telescope').extensions
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sa', builtin.autocommands, { desc = '[S]earch [A]utocommands' })
@@ -367,6 +369,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>sm', builtin.marks, { desc = '[S]earch [M]arks' })
+      vim.keymap.set('n', '<leader>sp', exts.projects.projects, { desc = '[S]earch [P]rojects' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -558,7 +561,9 @@ require('lazy').setup({
             },
           },
         },
-        terraformls = {}, -- terraform
+        eslint = {},
+        terraformls = {}, -- terrafor
+        jsonls = {},
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -769,8 +774,10 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
           -- Problem with <CR> or <Tab> is that it can't distinguish selection vs newline insert
+          -- Not sure why C-CR doesn't work
+          -- ['<C-CR>'] = cmp.mapping.confirm { select = true },
+          ['<C-y>'] = cmp.mapping.confirm { select = true },
           -- Selection must be distinct from character input
           -- ['<CR>'] = cmp.mapping.confirm { select = true },
 
@@ -951,53 +958,66 @@ require('lazy').setup({
   -- Tree menu
   -- https://github.com/nvim-neo-tree/neo-tree.nvim
   -- help :Neotree; help is not populated if plugin is not loaded. It loads on tree open
+  -- {
+  --   'nvim-neo-tree/neo-tree.nvim',
+  --   version = '*',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+  --     'MunifTanjim/nui.nvim',
+  --   },
+  --   cmd = 'Neotree',
+  --   keys = {
+  --     -- Do not ask prompt to change cwd
+  --     -- '//' on close is mapped per window below
+  --     { '<C-F1>', ':Neotree reveal_force_cwd toggle<CR>', { desc = 'NeoTree reveal' } },
+  --     { '<C-F2>', ':Neotree document_symbols toggle<CR>', { desc = 'Neotree document symbols' } },
+  --     { '<C-F3>', ':Neotree git_status toggle<CR>', { desc = 'Neotree git status' } },
+  --   },
+  --   opts = {
+  --     filesystem = {
+  --       filtered_items = {
+  --         hide_dotfiles = false,
+  --         hide_gitignored = false,
+  --         hide_by_name = {
+  --           '.git',
+  --           '.terraform',
+  --           '.terraform.lock.hcl',
+  --           'node_modules',
+  --         },
+  --       },
+  --       window = {
+  --         mappings = {
+  --           -- Conflicts with leader key. <cr> already does what <space> does in neotree
+  --           ['<space>'] = 'noop',
+  --         },
+  --       },
+  --     },
+  --     sources = { 'filesystem', 'git_status', 'document_symbols' },
+  --   },
+  -- },
   {
-    'nvim-neo-tree/neo-tree.nvim',
-    version = '*',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
-      'MunifTanjim/nui.nvim',
-    },
-    cmd = 'Neotree',
-    keys = {
-      -- Do not ask prompt to change cwd
-      -- '//' on close is mapped per window below
-      { '<C-F1>', ':Neotree reveal_force_cwd toggle<CR>', { desc = 'NeoTree reveal' } },
-      { '<C-F2>', ':Neotree document_symbols toggle<CR>', { desc = 'Neotree document symbols' } },
-      { '<C-F3>', ':Neotree git_status toggle<CR>', { desc = 'Neotree git status' } },
-    },
+    'nvim-tree/nvim-tree.lua',
     opts = {
-      filesystem = {
-        filtered_items = {
-          hide_dotfiles = false,
-          hide_gitignored = false,
-          hide_by_name = {
-            '.git',
-            '.terraform',
-            '.terraform.lock.hcl',
-            'node_modules',
-          },
-        },
-        window = {
-          mappings = {
-            -- Conflicts with leader key. <cr> already does what <space> does in neotree
-            ['<space>'] = 'noop',
-          },
-        },
+      sync_root_with_cwd = true,
+      respect_buf_cwd = true,
+      update_focused_file = {
+        enable = true,
+        update_root = true,
       },
-      sources = { 'filesystem', 'git_status', 'document_symbols' },
     },
   },
 
   -- "cmp" already adds autopairs support. Do I really need this again
-  -- {
-  --   'windwp/nvim-autopairs',
-  --   event = 'InsertEnter',
-  --   config = true,
-  --   -- use opts = {} for passing setup options
-  --   -- this is equalent to setup({}) function
-  -- },
+  {
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    opts = {
+      check_ts = true, -- use treesitter to check
+    },
+    -- use opts = {} for passing setup options
+    -- this is equalent to setup({}) function
+  },
 
   -- Golang support
   {
@@ -1011,6 +1031,7 @@ require('lazy').setup({
     keys = {
       -- <leader>c_ : langauge agnostic
       { '<leader>ct', '<cmd>GoTest -n<cr>', desc = '[C]ode [T]est' },
+      { '<leader>cta', '<cmd>GoTest<cr>', desc = '[C]ode Test [A]ll' },
       { '<leader>ctp', '<cmd>GoTest -p<cr>', desc = '[C]ode Test Current [P]ackage' },
       { '<leader>cl', '<cmd>GoLint<cr>', desc = '[C]ode [L]int' },
       { '<leader>cd', '<cmd>GoDebug<cr>', desc = '[C]ode [D]ebug' },
@@ -1123,7 +1144,7 @@ require('lazy').setup({
           },
         },
       },
-      extensions = { 'neo-tree' },
+      extensions = { 'neo-tree', 'nvim-tree' },
     },
   },
 
@@ -1342,6 +1363,42 @@ require('lazy').setup({
   --     }
   --   end,
   -- },
+  --
+
+  -- Automatically close tags
+  -- https://github.com/windwp/nvim-ts-autotag
+  {
+    'windwp/nvim-ts-autotag',
+    opts = {
+      opts = {
+        -- Defaults
+        enable_close = true, -- Auto close tags
+        enable_rename = true, -- Auto rename pairs of tags
+        enable_close_on_slash = false, -- Auto close on trailing </
+      },
+      -- Also override individual filetype configs, these take priority.
+      -- Empty by default, useful if one of the "opts" global settings
+      -- doesn't work well in a specific filetype
+      per_filetype = {
+        ['html'] = {
+          enable_close = false,
+        },
+      },
+    },
+  },
+
+  {
+    'ahmedkhalf/project.nvim',
+    dependencies = {
+      'nvim-telescope/telescope.nvim',
+    },
+    config = function()
+      require('project_nvim').setup {}
+      require('telescope').load_extension 'projects'
+    end,
+    -- opts = {},
+  },
+
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   --
   --  Here are some example plugins that I've included in the Kickstart repository.

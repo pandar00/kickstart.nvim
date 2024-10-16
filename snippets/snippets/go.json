@@ -8,5 +8,25 @@
         "prefix": "tdt",
         "body": "func Test$1(t *testing.T) {\n\ttestCases := []struct {\n\t\tdesc\tstring\n\t\t$2\n\t}{\n\t\t{\n\t\t\tdesc: \"$3\",\n\t\t\t$4\n\t\t},\n\t}\n\tfor _, tC := range testCases {\n\t\tt.Run(tC.desc, func(t *testing.T) {\n\t\t\t$0\n\t\t})\n\t}\n}",
         "description": "Snippet for table driven test"
+    },
+    "type switch statement": {
+        "prefix": "tsw",
+        "body": "switch ${1:assign} := ${2:variable}.(type) {\ncase ${3:condition}:\n\t$4\ndefault:\n\t$0\n}",
+        "description": "Snippet for type switch"
+    },
+    "switch statement": {
+        "prefix": "sw",
+        "body": "switch ${1:expression} {\ncase ${2:condition}:\n\t$0\ndefault:\n\t$3\n}",
+        "description": "Snippet for switch statement"
+    },
+    "json marshal": {
+        "prefix": "jm",
+        "body": "b, err := json.Marshal(${1:var})\nif err != nil {\n\t${2:log.Fatalf(\"failed to marshal %s\", err)}\n}\nfmt.Println(string(b))",
+        "description": "JSON marshal"
+    },
+    "json unmarshal": {
+        "prefix": "ju",
+        "body": "err := json.Unmarshal([]byte(${1:var}), ${3:&ref})\nif err != nil {\n\t${2:log.Fatalf(\"failed to unmarshal %s\", err)}\n}\nfmt.Println(string(b))",
+        "description": "JSON unmarshal"
     }
 }
