@@ -221,7 +221,9 @@ vim.api.nvim_create_autocmd({ 'BufReadPost' }, {
 -- Configuration https://lazy.folke.io/configuration
 -- Plugin spec   https://lazy.folke.io/spec/examples
 require('lazy').setup({
-  -- Detect tabstop and shiftwidth automatically
+  -- Detect tabstop and shiftwidth automatically, so managing those setting per file type
+  -- is generally not needed
+  -- (tag: indent)
   -- https://github.com/tpope/vim-sleuth
   { 'tpope/vim-sleuth' },
 
@@ -366,6 +368,8 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>si', builtin.highlights, { desc = '[S]earch h[i]ghlight' })
       vim.keymap.set('n', '<leader>sc', builtin.colorscheme, { desc = '[S]earch [c]olorscheme' })
+      -- Shows a list of all filetypes and changes the current buffer's filetype on select
+      -- vim.keymap.set('n', '<leader>st', builtin.filetypes, { desc = '[S]earch File[t]ypes' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>sm', builtin.marks, { desc = '[S]earch [M]arks' })
@@ -677,10 +681,12 @@ require('lazy').setup({
         sh = { 'shellcheck', 'shfmt' },
         -- Conform can also run multiple formatters sequentially
         python = { 'isort', 'black' },
-        css = { 'prettier' },
 
         yaml = { 'yamlfmt' },
-        typescript = { 'prettier' },
+        -- Install https://github.com/fsouza/prettierd
+        css = { 'prettierd' },
+        typescript = { 'prettierd' },
+        typescriptreact = { 'prettierd' },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.

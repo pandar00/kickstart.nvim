@@ -28,5 +28,10 @@
         "prefix": "ju",
         "body": "err := json.Unmarshal([]byte(${1:var}), ${3:&ref})\nif err != nil {\n\t${2:log.Fatalf(\"failed to unmarshal %s\", err)}\n}\nfmt.Println(string(b))",
         "description": "JSON unmarshal"
+    },
+    "diff assert": {
+        "prefix": "diff",
+        "body": "diff := cmp.Diff(${1:expected}, ${2:actual}, ${3:options})\nif diff != \"\" {\n\tassert.Failf(\"mismatch (+want -got)\\n\", diff)\n}",
+        "description": "Diff assert statements"
     }
 }
