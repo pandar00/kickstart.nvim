@@ -23,6 +23,11 @@ vim.g.loaded_netrwPlugin = 1
 -- optionally enable 24-bit colour
 vim.opt.termguicolors = true
 
+-- use treesitter for folding
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+vim.opt.foldenable = false
+
 -- Make line numbers default
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
@@ -1385,11 +1390,11 @@ require('lazy').setup({
       -- Also override individual filetype configs, these take priority.
       -- Empty by default, useful if one of the "opts" global settings
       -- doesn't work well in a specific filetype
-      per_filetype = {
-        ['html'] = {
-          enable_close = false,
-        },
-      },
+      -- per_filetype = {
+      --   ['html'] = {
+      --     enable_close = false,
+      --   },
+      -- },
     },
   },
 
