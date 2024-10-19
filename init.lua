@@ -1248,6 +1248,7 @@ require('lazy').setup({
   --   },
   --   event = 'VeryLazy',
   --   opts = {},
+  --
   --   init = function()
   --     vim.o.foldcolumn = '1' -- '0' is not bad
   --     vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
@@ -1408,6 +1409,16 @@ require('lazy').setup({
       require('telescope').load_extension 'projects'
     end,
     -- opts = {},
+  },
+  {
+    -- Multi line cursor
+    -- https://github.com/mg979/vim-visual-multi
+    -- help: visual-multi
+    'mg979/vim-visual-multi',
+    -- init is where vim.g should be placed. Called on every plugin start
+    init = function()
+      vim.g.VM_leader = '<space>v'
+    end,
   },
 
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
