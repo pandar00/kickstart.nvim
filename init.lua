@@ -28,13 +28,16 @@ vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
 vim.opt.foldenable = false
 
+-- Use plugin statuscol instead
 -- Make line numbers default
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
 vim.opt.relativenumber = true
 -- show both absolute and relative number
-vim.o.statuscolumn = '%s %l %r '
+-- vim.o.statuscolumn = '%s %l %r '
+-- Also can have it call custom function
+-- vim.o.statuscolumn = "%!v:lua.require('statuscolumn').number()"
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -820,10 +823,19 @@ require('lazy').setup({
           -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
         },
+        -- NOTE: See cmp-config.preselect and *cmp-config.view.entries.selection_order*
+        -- for how the preselect works
+        -- NOTE: Nvim-cmp respects the LSP (Language Server Protocol) specification.
+        -- The LSP spec defines the `preselect` feature for completion.
+        --
+        -- "None" option still preselects but selects the first one as desired
+        preselect = cmp.PreselectMode.None,
+
         sources = {
           { name = 'nvim_lsp', group_index = 2 },
-          { name = 'copilot', group_index = 2 },
+          -- { name = 'copilot', group_index = 2 },
           { name = 'luasnip', group_index = 2 },
+          { name = 'codeium', group_index = 2 },
           { name = 'path', group_index = 2 },
         },
 
@@ -836,7 +848,7 @@ require('lazy').setup({
         sorting = {
           priority_weight = 2,
           comparators = {
-            require('copilot_cmp.comparators').prioritize,
+            -- require('copilot_cmp.comparators').prioritize,
 
             -- Below is the default comparitor list and order for nvim-cmp
             cmp.config.compare.offset,
@@ -1015,6 +1027,15 @@ require('lazy').setup({
       update_focused_file = {
         enable = true,
         update_root = true,
+      },
+      view = {
+        signcolumn = 'auto',
+        -- A table indicates that the view should be dynamically sized based on the longest
+        -- line
+        width = {
+          -- set max just in case...
+          max = 60,
+        },
       },
     },
   },
@@ -1298,26 +1319,54 @@ require('lazy').setup({
   --   end,
   -- },
 
-  -- Github Copilot
+  -- Codeium
   {
-    'zbirenbaum/copilot.lua',
-    cmd = 'Copilot',
-    event = 'InsertEnter',
-    opts = {},
+    'Exafunction/codeium.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'hrsh7th/nvim-cmp',
+    },
     config = function()
-      require('copilot').setup {
-        suggestion = { enabled = false },
-        panel = { enabled = false },
+      -- default configuration
+      require('codeium').setup {
+        {
+          workspace_root = {
+            use_lsp = true,
+            find_root = nil,
+            paths = {
+              '.bzr',
+              '.git',
+              '.hg',
+              '.svn',
+              '_FOSSIL_',
+              'package.json',
+            },
+          },
+        },
       }
     end,
   },
-  -- Copilot completion
-  {
-    'zbirenbaum/copilot-cmp',
-    config = function()
-      require('copilot_cmp').setup()
-    end,
-  },
+
+  -- Github Copilot
+  -- {
+  --   'zbirenbaum/copilot.lua',
+  --   cmd = 'Copilot',
+  --   event = 'InsertEnter',
+  --   opts = {},
+  --   config = function()
+  --     require('copilot').setup {
+  --       suggestion = { enabled = false },
+  --       panel = { enabled = false },
+  --     }
+  --   end,
+  -- },
+  -- -- Copilot completion
+  -- {
+  --   'zbirenbaum/copilot-cmp',
+  --   config = function()
+  --     require('copilot_cmp').setup()
+  --   end,
+  -- },
   -- {
   --   'nvim-cmp',
   --   dependencies = {
@@ -1418,6 +1467,17 @@ require('lazy').setup({
     -- init is where vim.g should be placed. Called on every plugin start
     init = function()
       vim.g.VM_leader = '<space>v'
+      vim.g.VM_add_cursor_at_pos_no_mappings = 1
+    end,
+  },
+
+  {
+    'luukvbaal/statuscol.nvim',
+    config = function()
+      require('statuscol').setup {
+        setopt = true,
+        relculright = true,
+      }
     end,
   },
 

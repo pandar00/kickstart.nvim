@@ -33,5 +33,10 @@
         "prefix": "diff",
         "body": "diff := cmp.Diff(${1:expected}, ${2:actual}, ${3:options})\nif diff != \"\" {\n\tassert.Failf(\"mismatch (+want -got)\\n\", diff)\n}",
         "description": "Diff assert statements"
+    },
+    "echo handler": {
+        "prefix": "echohandler",
+        "body": "func (s *Server) ${1:HandlerName}(c echo.Context) error {\n\tvar in ${2:Request}\n\terr := c.Bind(\u0026in)\n\tif err != nil {\n\t\treturn echo.NewHTTPError(http.StatusBadRequest, NewError(err.Error()))\n\t}\n\n\terr = s.Validator.Validate(\u0026in)\n\tif err != nil {\n\t\treturn echo.NewHTTPError(http.StatusBadRequest, NewError(err.Error()))\n\t}\n\n\tvar out ${3:Body}\n\treturn c.JSON(http.StatusOK, \u0026out)\n}",
+        "description": "echo handler template"
     }
 }
