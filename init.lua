@@ -27,6 +27,7 @@ vim.opt.termguicolors = true
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
 vim.opt.foldenable = false
+vim.opt.foldlevel = 99
 
 -- Use plugin statuscol instead
 -- Make line numbers default
@@ -281,6 +282,56 @@ require('lazy').setup({
           { '<leader>h', desc = 'Git [H]unk', mode = 'v' },
         },
       }
+
+      -- https://github.com/folke/which-key.nvim/issues/135#issuecomment-898175086
+      local wkl = require 'which-key'
+      vim.cmd 'autocmd FileType * lua setKeybinds()'
+      function setKeybinds()
+        local fileTy = vim.api.nvim_buf_get_option(0, 'filetype')
+        local opts = { prefix = '<localleader>', buffer = 0 }
+
+        if fileTy == 'go' then
+          wkl.add {
+            { '<leader>ct', '<cmd>GoTest -n -F<cr>', desc = '[C]ode [T]est' },
+            { '<leader>ctd', '<cmd>GoTest -n -F -a -test.count=1<cr>', desc = '[C]ode [T]est [D]isable Cache' },
+
+            { '<leader>ctv', '<cmd>GoTest -n -F -v<cr>', desc = '[C]ode [T]est [V]erbose' },
+            { '<leader>cta', '<cmd>GoTest -F<cr>', desc = '[C]ode Test [A]ll' },
+            { '<leader>ctp', '<cmd>GoTest -p -F<cr>', desc = '[C]ode Test Current [P]ackage' },
+            { '<leader>cl', '<cmd>GoLint<cr>', desc = '[C]ode [L]int' },
+          }
+        elseif fileTy == 'typescript' then
+          wkl.add {
+            -- https://github.com/ecosse3/nvim/blob/344706db1ad7c0cf7112714dd50eadc647fb81fc/lua/plugins/which-key/setup.lua#L223
+            { '<leader>ct', "<cmd>lua require('neotest').run.run()<CR>", desc = '[C]ode [T]est' },
+            { '<leader>ctc', "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>", desc = '[C]ode [T]est [C]urrent File' },
+            { '<leader>cto', "<cmd>lua require('neotest').output.open({ enter = true })<CR>", desc = '[C]ode [T]est [O]utput Open' },
+          }
+          -- wkl.register({
+          --   ['W'] = { ':w<CR>', 'test write' },
+          --   ['Q'] = { ':q<CR>', 'test quit' },
+          -- }, opts)
+        end
+      end
+
+      -- local wk = require 'which-key'
+      -- note: wk.add can call lua functions. e.g.) read buffer and run command
+      -- based on filetype
+      -- -- testing
+      -- wk.add {
+      --   '<leader>ct',
+      --   function()
+      --     local buf = vim.api.nvim_get_current_buf()
+      --     local ft = vim.api.nvim_buf_get_option(buf, 'filetype')
+      --
+      --     if ft == 'go' then
+      --       -- { '<leader>ct', '<cmd>GoTest -n -F<cr>', desc = '[C]ode [T]est' },
+      --       print 'im go'
+      --     elseif ft == '' then
+      --     end
+      --   end,
+      --   desc = '[C]ode [T]est',
+      -- }
     end,
   },
 
@@ -1062,11 +1113,13 @@ require('lazy').setup({
     },
     keys = {
       -- <leader>c_ : langauge agnostic
-      { '<leader>ct', '<cmd>GoTest -n -F<cr>', desc = '[C]ode [T]est' },
-      { '<leader>ctv', '<cmd>GoTest -n -F -v<cr>', desc = '[C]ode [T]est [V]erbose' },
-      { '<leader>cta', '<cmd>GoTest -F<cr>', desc = '[C]ode Test [A]ll' },
-      { '<leader>ctp', '<cmd>GoTest -p -F<cr>', desc = '[C]ode Test Current [P]ackage' },
-      { '<leader>cl', '<cmd>GoLint -F<cr>', desc = '[C]ode [L]int' },
+      -- { '<leader>ct', '<cmd>GoTest -n -F<cr>', desc = '[C]ode [T]est' },
+      { '<leader>ctd', '<cmd>GoTest -n -F -a -test.count=1<cr>', desc = '[C]ode [T]est [D]isable Cache' },
+
+      -- { '<leader>ctv', '<cmd>GoTest -n -F -v<cr>', desc = '[C]ode [T]est [V]erbose' },
+      -- { '<leader>cta', '<cmd>GoTest -F<cr>', desc = '[C]ode Test [A]ll' },
+      -- { '<leader>ctp', '<cmd>GoTest -p -F<cr>', desc = '[C]ode Test Current [P]ackage' },
+      -- { '<leader>cl', '<cmd>GoLint<cr>', desc = '[C]ode [L]int' },
       { '<leader>cd', '<cmd>GoDebug<cr>', desc = '[C]ode [D]ebug' },
       { '<leader>cds', '<cmd>GoDbgStop<cr>', desc = '[C]ode [D]ebug [S]top' },
 
@@ -1200,9 +1253,20 @@ require('lazy').setup({
     main = 'ibl',
     opts = {
       indent = {
-        -- Using '▎' hides cursor in insert mode
+        -- Issue: Nearest ident (i.e scope) and the rest are highlighted differently
+        --
+        -- Cursorline 21283b
+        -- IblIndent also 21283b
+        -- IblWhitespace 455574
+        --
+        --
+        -- Issue: These two conflicts and make it unable to see comment parens
+        -- MatchParen 455574
+        -- Comment 455574
+        --
         char = '│',
         tab_char = { '>' },
+        -- highlight = { 'WarningMsg' },
       },
     },
   },
@@ -1263,63 +1327,63 @@ require('lazy').setup({
   --         [C]: in function 'error'
   --         ...ho/.local/share/nvim/lazy/nvim-ufo/lua/ufo/decorator.lua:143: in function <...ho/.local/share/nvim/lazy/nvim-ufo/lua/ufo/decorator.lua:140>
   --
-  -- {
-  --   'kevinhwang91/nvim-ufo',
-  --   dependencies = {
-  --     'neovim/nvim-lspconfig',
-  --     'kevinhwang91/promise-async',
-  --   },
-  --   event = 'VeryLazy',
-  --   opts = {},
-  --
-  --   init = function()
-  --     vim.o.foldcolumn = '1' -- '0' is not bad
-  --     vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-  --     vim.o.foldlevelstart = 99
-  --     vim.o.foldenable = true
-  --   end,
-  --   config = function()
-  --     local ufo = require 'ufo'
-  --     -- https://github.com/jdhao/nvim-config/blob/6e60475f3f956ee4b7a2a2deea47f44d9676ed9a/lua/config/nvim_ufo.lua
-  --     local handler = function(virtText, lnum, endLnum, width, truncate)
-  --       local newVirtText = {}
-  --       local foldedLines = endLnum - lnum
-  --       local suffix = (' 󰁂  %d'):format(foldedLines)
-  --       local sufWidth = vim.fn.strdisplaywidth(suffix)
-  --       local targetWidth = width - sufWidth
-  --       local curWidth = 0
-  --
-  --       for _, chunk in ipairs(virtText) do
-  --         local chunkText = chunk[1]
-  --         local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-  --         if targetWidth > curWidth + chunkWidth then
-  --           table.insert(newVirtText, chunk)
-  --         else
-  --           chunkText = truncate(chunkText, targetWidth - curWidth)
-  --           local hlGroup = chunk[2]
-  --           table.insert(newVirtText, { chunkText, hlGroup })
-  --           chunkWidth = vim.fn.strdisplaywidth(chunkText)
-  --           -- str width returned from truncate() may less than 2nd argument, need padding
-  --           if curWidth + chunkWidth < targetWidth then
-  --             suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
-  --           end
-  --           break
-  --         end
-  --         curWidth = curWidth + chunkWidth
-  --       end
-  --       local rAlignAppndx = math.max(math.min(vim.opt.textwidth['_value'], width - 1) - curWidth - sufWidth, 0)
-  --       suffix = (' '):rep(rAlignAppndx) .. suffix
-  --       table.insert(newVirtText, { suffix, 'MoreMsg' })
-  --       return newVirtText
-  --     end
-  --     ---@diagnostic disable-next-line: missing-fields
-  --     ufo.setup {
-  --       fold_virt_text_handler = handler,
-  --     }
-  --     vim.keymap.set('n', 'zR', ufo.openAllFolds)
-  --     vim.keymap.set('n', 'zM', ufo.closeAllFolds)
-  --   end,
-  -- },
+  {
+    'kevinhwang91/nvim-ufo',
+    dependencies = {
+      'neovim/nvim-lspconfig',
+      'kevinhwang91/promise-async',
+    },
+    event = 'VeryLazy',
+    opts = {},
+
+    init = function()
+      vim.o.foldcolumn = '1' -- '0' is not bad
+      vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+      vim.o.foldlevelstart = 99
+      vim.o.foldenable = true
+    end,
+    config = function()
+      local ufo = require 'ufo'
+      -- https://github.com/jdhao/nvim-config/blob/6e60475f3f956ee4b7a2a2deea47f44d9676ed9a/lua/config/nvim_ufo.lua
+      local handler = function(virtText, lnum, endLnum, width, truncate)
+        local newVirtText = {}
+        local foldedLines = endLnum - lnum
+        local suffix = (' 󰁂  %d'):format(foldedLines)
+        local sufWidth = vim.fn.strdisplaywidth(suffix)
+        local targetWidth = width - sufWidth
+        local curWidth = 0
+
+        for _, chunk in ipairs(virtText) do
+          local chunkText = chunk[1]
+          local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+          if targetWidth > curWidth + chunkWidth then
+            table.insert(newVirtText, chunk)
+          else
+            chunkText = truncate(chunkText, targetWidth - curWidth)
+            local hlGroup = chunk[2]
+            table.insert(newVirtText, { chunkText, hlGroup })
+            chunkWidth = vim.fn.strdisplaywidth(chunkText)
+            -- str width returned from truncate() may less than 2nd argument, need padding
+            if curWidth + chunkWidth < targetWidth then
+              suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
+            end
+            break
+          end
+          curWidth = curWidth + chunkWidth
+        end
+        local rAlignAppndx = math.max(math.min(vim.opt.textwidth['_value'], width - 1) - curWidth - sufWidth, 0)
+        suffix = (' '):rep(rAlignAppndx) .. suffix
+        table.insert(newVirtText, { suffix, 'MoreMsg' })
+        return newVirtText
+      end
+      ---@diagnostic disable-next-line: missing-fields
+      ufo.setup {
+        fold_virt_text_handler = handler,
+      }
+      vim.keymap.set('n', 'zR', ufo.openAllFolds)
+      vim.keymap.set('n', 'zM', ufo.closeAllFolds)
+    end,
+  },
 
   -- Codeium
   {
@@ -1474,20 +1538,128 @@ require('lazy').setup({
   },
 
   {
+    -- Line number column formatting.
     'luukvbaal/statuscol.nvim',
     config = function()
+      local builtin = require 'statuscol.builtin'
       require('statuscol').setup {
         setopt = true,
-        relculright = true,
+        relculright = true, -- aligns the curr ln right
+
+        -- segments = {
+        --   { text = { '%C' }, click = 'v:lua.ScFa' },
+        --   { text = { '%s' }, click = 'v:lua.ScSa' },
+        --   {
+        --     text = { builtin.lnumfunc, ' ' },
+        --     condition = { true, builtin.not_empty },
+        --     click = 'v:lua.ScLa',
+        --   },
+        -- },
       }
     end,
   },
 
   {
+    -- Theme
     'navarasu/onedark.nvim',
     opts = {
       style = 'deep',
     },
+  },
+
+  -- {
+  --   'anuvyklack/pretty-fold.nvim',
+  --   config = function()
+  --     require('pretty-fold').setup()
+  --   end,
+  -- },
+
+  {
+    -- https://github.com/nvim-neotest/neotest
+    'nvim-neotest/neotest',
+    dependencies = {
+      'nvim-neotest/nvim-nio',
+      'nvim-lua/plenary.nvim',
+      'antoinemadec/FixCursorHold.nvim',
+      'nvim-treesitter/nvim-treesitter',
+      -- https://github.com/ecosse3/nvim/blob/344706db1ad7c0cf7112714dd50eadc647fb81fc/lua/plugins/testing.lua#L22
+      'nvim-neotest/neotest-jest', -- Jest
+    },
+    config = function()
+      require('neotest').setup {
+        adapters = {
+          require 'neotest-jest' {
+            jestCommand = 'npm test --',
+            env = { CI = true },
+            cwd = function(path)
+              return vim.fn.getcwd()
+            end,
+          },
+        },
+        diagnostic = {
+          enabled = false,
+        },
+        highlights = {
+          adapter_name = 'NeotestAdapterName',
+          border = 'NeotestBorder',
+          dir = 'NeotestDir',
+          expand_marker = 'NeotestExpandMarker',
+          failed = 'NeotestFailed',
+          file = 'NeotestFile',
+          focused = 'NeotestFocused',
+          indent = 'NeotestIndent',
+          namespace = 'NeotestNamespace',
+          passed = 'NeotestPassed',
+          running = 'NeotestRunning',
+          skipped = 'NeotestSkipped',
+          test = 'NeotestTest',
+        },
+        icons = {
+          child_indent = '│',
+          child_prefix = '├',
+          collapsed = '─',
+          expanded = '╮',
+          failed = '✖',
+          final_child_indent = ' ',
+          final_child_prefix = '╰',
+          non_collapsible = '─',
+          passed = '✔',
+          running = '',
+          unknown = '?',
+        },
+        output = {
+          enabled = true,
+          open_on_run = true,
+        },
+        run = {
+          enabled = true,
+        },
+        status = {
+          enabled = true,
+        },
+        strategies = {
+          integrated = {
+            height = 40,
+            width = 120,
+          },
+        },
+        summary = {
+          enabled = true,
+          expand_errors = true,
+          follow = true,
+          mappings = {
+            attach = 'a',
+            expand = { '<CR>', '<2-LeftMouse>' },
+            expand_all = 'e',
+            jumpto = 'i',
+            output = 'o',
+            run = 'r',
+            short = 'O',
+            stop = 'u',
+          },
+        },
+      }
+    end,
   },
 
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart

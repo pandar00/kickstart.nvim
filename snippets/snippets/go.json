@@ -38,5 +38,13 @@
         "prefix": "echohandler",
         "body": "func (s *Server) ${1:HandlerName}(c echo.Context) error {\n\tvar in ${2:Request}\n\terr := c.Bind(\u0026in)\n\tif err != nil {\n\t\treturn echo.NewHTTPError(http.StatusBadRequest, NewError(err.Error()))\n\t}\n\n\terr = s.Validator.Validate(\u0026in)\n\tif err != nil {\n\t\treturn echo.NewHTTPError(http.StatusBadRequest, NewError(err.Error()))\n\t}\n\n\tvar out ${3:Body}\n\treturn c.JSON(http.StatusOK, \u0026out)\n}",
         "description": "echo handler template"
+    },
+    "for i": {
+        "prefix": "fori",
+        "body": "for i := 0; i < ${1:var}; i++ {\n\t${2}\n}"
+    },
+    "for r": {
+        "prefix": "forr",
+        "body": "for ${1:_}, ${2:v} := range ${3:var} {\n\t${4}\n}"
     }
 }
