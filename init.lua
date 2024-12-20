@@ -108,7 +108,8 @@ vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- <C-c> causes lua scripts to abort
-vim.keymap.set('i', '<C-c>', '<esc>')
+-- https://github.com/kevinhwang91/nvim-ufo/issues/202#issuecomment-1950969654
+vim.keymap.set('i', '<C-c>', '<esc>', { noremap = true })
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
@@ -292,20 +293,34 @@ require('lazy').setup({
 
         if fileTy == 'go' then
           wkl.add {
-            { '<leader>ct', '<cmd>GoTest -n -F<cr>', desc = '[C]ode [T]est' },
+            -- { '<leader>ct', '<cmd>GoTest -n -F<cr>', desc = '[C]ode [T]est' },
             { '<leader>ctd', '<cmd>GoTest -n -F -a -test.count=1<cr>', desc = '[C]ode [T]est [D]isable Cache' },
 
             { '<leader>ctv', '<cmd>GoTest -n -F -v<cr>', desc = '[C]ode [T]est [V]erbose' },
-            { '<leader>cta', '<cmd>GoTest -F<cr>', desc = '[C]ode Test [A]ll' },
+            -- { '<leader>cta', '<cmd>GoTest -F<cr>', desc = '[C]ode Test [A]ll' },
             { '<leader>ctp', '<cmd>GoTest -p -F<cr>', desc = '[C]ode Test Current [P]ackage' },
             { '<leader>cl', '<cmd>GoLint<cr>', desc = '[C]ode [L]int' },
+
+            -- Neotest
+            { '<leader>ct', "<cmd>lua require('neotest').run.run()<cr>", desc = '[C]ode [T]est' },
+            { '<leader>cta', '<cmd>GoTest -F<cr>', desc = '[C]ode Test [A]ll' },
+            { '<leader>cts', "<cmd>lua require('neotest').run.run({ suite = true })<cr>", desc = '[C]ode [T]est [S]uite' },
+            { '<leader>ctf', "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<cr>", desc = '[C]ode [T]est [F]ile' },
+            { '<leader>cto', "<cmd>lua require('neotest').output.open({ auto_close = true, })<CR>", desc = '[C]ode [T]est [O]utput Open' },
+            {
+              '<leader>ts',
+              function()
+                require('neotest').summary.toggle()
+              end,
+              desc = '[t]est [s]ummary',
+            },
           }
         elseif fileTy == 'typescript' then
           wkl.add {
             -- https://github.com/ecosse3/nvim/blob/344706db1ad7c0cf7112714dd50eadc647fb81fc/lua/plugins/which-key/setup.lua#L223
             { '<leader>ct', "<cmd>lua require('neotest').run.run()<CR>", desc = '[C]ode [T]est' },
             { '<leader>ctc', "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>", desc = '[C]ode [T]est [C]urrent File' },
-            { '<leader>cto', "<cmd>lua require('neotest').output.open({ enter = true })<CR>", desc = '[C]ode [T]est [O]utput Open' },
+            { '<leader>cto', "<cmd>lua require('neotest').output.open({ auto_close = true, })<CR>", desc = '[C]ode [T]est [O]utput Open' },
           }
           -- wkl.register({
           --   ['W'] = { ':w<CR>', 'test write' },
@@ -432,6 +447,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>sm', builtin.marks, { desc = '[S]earch [M]arks' })
+      vim.keymap.set('n', '<leader>sl', builtin.man_pages, { desc = '[S]earch Manua[l] Pages' })
       vim.keymap.set('n', '<leader>sp', exts.projects.projects, { desc = '[S]earch [P]rojects' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
@@ -798,6 +814,9 @@ require('lazy').setup({
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
       'windwp/nvim-autopairs',
+
+      'tailwind-tools',
+      'onsails/lspkind-nvim',
     },
     config = function()
       -- See `:help cmp`
@@ -821,6 +840,11 @@ require('lazy').setup({
           documentation = cmp.config.window.bordered(),
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
+        formatting = {
+          format = require('lspkind').cmp_format {
+            before = require('tailwind-tools.cmp').lspkind_format,
+          },
+        },
 
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
@@ -1584,6 +1608,7 @@ require('lazy').setup({
       'nvim-treesitter/nvim-treesitter',
       -- https://github.com/ecosse3/nvim/blob/344706db1ad7c0cf7112714dd50eadc647fb81fc/lua/plugins/testing.lua#L22
       'nvim-neotest/neotest-jest', -- Jest
+      { 'fredrikaverpil/neotest-golang', version = '*' }, -- Golang: Installation
     },
     config = function()
       require('neotest').setup {
@@ -1595,6 +1620,7 @@ require('lazy').setup({
               return vim.fn.getcwd()
             end,
           },
+          require 'neotest-golang', -- Golang Registration
         },
         diagnostic = {
           enabled = false,
@@ -1660,6 +1686,18 @@ require('lazy').setup({
         },
       }
     end,
+  },
+  {
+    -- https://github.com/luckasRanarison/tailwind-tools.nvim
+    'luckasRanarison/tailwind-tools.nvim',
+    name = 'tailwind-tools',
+    build = ':UpdateRemotePlugins',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-telescope/telescope.nvim', -- optional
+      'neovim/nvim-lspconfig', -- optional
+    },
+    opts = {}, -- your configuration
   },
 
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
