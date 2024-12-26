@@ -290,6 +290,22 @@ require('lazy').setup({
       function setKeybinds()
         local fileTy = vim.api.nvim_buf_get_option(0, 'filetype')
         local opts = { prefix = '<localleader>', buffer = 0 }
+        wkl.add {
+          {
+            '<C-F5>',
+            function()
+              require('neotest').summary.toggle()
+            end,
+            desc = '[T]est [S]ummary',
+          },
+          {
+            '<leader>tt',
+            function()
+              require('neotest').run.stop()
+            end,
+            desc = '[T]est [T]erminate',
+          },
+        }
 
         if fileTy == 'go' then
           wkl.add {
@@ -307,13 +323,6 @@ require('lazy').setup({
             { '<leader>cts', "<cmd>lua require('neotest').run.run({ suite = true })<cr>", desc = '[C]ode [T]est [S]uite' },
             { '<leader>ctf', "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<cr>", desc = '[C]ode [T]est [F]ile' },
             { '<leader>cto', "<cmd>lua require('neotest').output.open({ auto_close = true, })<CR>", desc = '[C]ode [T]est [O]utput Open' },
-            {
-              '<leader>ts',
-              function()
-                require('neotest').summary.toggle()
-              end,
-              desc = '[t]est [s]ummary',
-            },
           }
         elseif fileTy == 'typescript' then
           wkl.add {
@@ -1621,6 +1630,7 @@ require('lazy').setup({
             end,
           },
           require 'neotest-golang', -- Golang Registration
+          -- require 'neotest-golang' { runner = 'gotestsum' }, -- Golang Registration
         },
         diagnostic = {
           enabled = false,
@@ -1640,6 +1650,14 @@ require('lazy').setup({
           skipped = 'NeotestSkipped',
           test = 'NeotestTest',
         },
+        floating = {
+          border = 'rounded',
+          max_height = 0.6,
+          max_width = 0.6,
+          options = {
+            wrap = true,
+          },
+        },
         icons = {
           child_indent = '│',
           child_prefix = '├',
@@ -1656,6 +1674,10 @@ require('lazy').setup({
         output = {
           enabled = true,
           open_on_run = true,
+        },
+        output_panel = {
+          enabled = true,
+          open = 'botright split | resize 15',
         },
         run = {
           enabled = true,
