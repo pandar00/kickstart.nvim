@@ -1581,7 +1581,7 @@ require('lazy').setup({
   },
   {
     -- https://github.com/luckasRanarison/tailwind-tools.nvim
-    'luckas Ranarison/tailwind-tools.nvim',
+    'luckasRanarison/tailwind-tools.nvim',
     name = 'tailwind-tools',
     build = ':UpdateRemotePlugins',
     dependencies = {
