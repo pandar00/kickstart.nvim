@@ -672,13 +672,13 @@ require('lazy').setup({
       -- NOTE: lsp configs are moved to after/lsp directory.
       -- https://github.com/nvim-lua/kickstart.nvim/pull/1475#issuecomment-2868630411
       local servers = {
-        clangd = {}, -- C
+        -- clangd = {}, -- C
         gopls = {}, -- Golang
         pyright = {}, -- Python
         marksman = {}, -- Markdown
-        tailwindcss = {}, -- ?
-        svelte = {}, -- svelt
-        zls = {}, -- Ziglang
+        -- tailwindcss = {}, -- ?
+        -- svelte = {}, -- svelt
+        -- zls = {}, -- Ziglang
         bashls = {}, -- bash scripts
         dockerls = {}, -- Docker files
         yamlls = {},
