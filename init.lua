@@ -322,14 +322,16 @@ require('lazy').setup({
             { '<leader>cta', '<cmd>GoTest -F<cr>', desc = '[C]ode Test [A]ll' },
             { '<leader>cts', "<cmd>lua require('neotest').run.run({ suite = true })<cr>", desc = '[C]ode [T]est [S]uite' },
             { '<leader>ctf', "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<cr>", desc = '[C]ode [T]est [F]ile' },
-            { '<leader>cto', "<cmd>lua require('neotest').output.open({ auto_close = true, })<CR>", desc = '[C]ode [T]est [O]utput Open' },
+            { '<leader>cto', "<cmd>lua require('neotest').output.open({ enter = true, })<CR>", desc = '[C]ode [T]est [O]utput Open' },
+            -- { '<leader>cto', "<cmd>lua require('neotest').output.open({ auto_close = false, })<CR>", desc = '[C]ode [T]est [O]utput Open' },
           }
         elseif fileTy == 'typescript' then
           wkl.add {
             -- https://github.com/ecosse3/nvim/blob/344706db1ad7c0cf7112714dd50eadc647fb81fc/lua/plugins/which-key/setup.lua#L223
             { '<leader>ct', "<cmd>lua require('neotest').run.run()<CR>", desc = '[C]ode [T]est' },
             { '<leader>ctc', "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>", desc = '[C]ode [T]est [C]urrent File' },
-            { '<leader>cto', "<cmd>lua require('neotest').output.open({ auto_close = true, })<CR>", desc = '[C]ode [T]est [O]utput Open' },
+            { '<leader>cto', "<cmd>lua require('neotest').output.open({ enter = true, })<CR>", desc = '[C]ode [T]est [O]utput Open' },
+            -- { '<leader>cto', "<cmd>lua require('neotest').output.open({ auto_close = true, })<CR>", desc = '[C]ode [T]est [O]utput Open' },
           }
           -- wkl.register({
           --   ['W'] = { ':w<CR>', 'test write' },
@@ -919,7 +921,7 @@ require('lazy').setup({
           { name = 'nvim_lsp', group_index = 2 },
           -- { name = 'copilot', group_index = 2 },
           { name = 'luasnip', group_index = 2 },
-          { name = 'codeium', group_index = 2 },
+          -- { name = 'codeium', group_index = 2 },
           { name = 'path', group_index = 2 },
         },
 
@@ -1419,33 +1421,33 @@ require('lazy').setup({
   },
 
   -- Codeium
-  {
-    'Exafunction/codeium.nvim',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'hrsh7th/nvim-cmp',
-    },
-    config = function()
-      -- default configuration
-      require('codeium').setup {
-        {
-          workspace_root = {
-            use_lsp = true,
-            find_root = nil,
-            paths = {
-              '.bzr',
-              '.git',
-              '.hg',
-              '.svn',
-              '_FOSSIL_',
-              'package.json',
-            },
-          },
-        },
-      }
-    end,
-  },
-
+  -- {
+  --   'Exafunction/codeium.nvim',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'hrsh7th/nvim-cmp',
+  --   },
+  --   config = function()
+  --     -- default configuration
+  --     require('codeium').setup {
+  --       {
+  --         workspace_root = {
+  --           use_lsp = true,
+  --           find_root = nil,
+  --           paths = {
+  --             '.bzr',
+  --             '.git',
+  --             '.hg',
+  --             '.svn',
+  --             '_FOSSIL_',
+  --             'package.json',
+  --           },
+  --         },
+  --       },
+  --     }
+  --   end,
+  -- },
+  --
   -- Github Copilot
   -- {
   --   'zbirenbaum/copilot.lua',
