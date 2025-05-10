@@ -713,8 +713,6 @@ require('lazy').setup({
         automatic_enable = true,
         -- automatic_installation = false,
       }
-
-      vim.lsp.enable 'gdscript'
     end,
   },
 
