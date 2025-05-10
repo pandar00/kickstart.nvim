@@ -686,6 +686,7 @@ require('lazy').setup({
         terraformls = {}, -- terraform
         jsonls = {},
         lua_ls = {},
+        gdtoolkit = {}, -- gdscript
       }
 
       -- Ensure the servers and tools above are installed
@@ -709,8 +710,11 @@ require('lazy').setup({
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-        automatic_installation = false,
+        automatic_enable = true,
+        -- automatic_installation = false,
       }
+
+      vim.lsp.enable 'gdscript'
     end,
   },
 
@@ -1579,7 +1583,7 @@ require('lazy').setup({
   },
   {
     -- https://github.com/luckasRanarison/tailwind-tools.nvim
-    'luckasRanarison/tailwind-tools.nvim',
+    'luckas Ranarison/tailwind-tools.nvim',
     name = 'tailwind-tools',
     build = ':UpdateRemotePlugins',
     dependencies = {
