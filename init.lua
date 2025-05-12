@@ -100,6 +100,9 @@ vim.opt.expandtab = true
 -- https://neovim.io/doc/user/options.html#'colorcolumn'
 vim.opt.colorcolumn = '100'
 
+-- Required for Obsidian
+vim.opt.conceallevel = 3
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -457,6 +460,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
+      vim.keymap.set('n', '<leader>so', ':ObsidianSearch<CR>', { desc = '[S]earch [O]bsidian' })
+      vim.keymap.set('n', '<leader>ot', ':ObsidianTags<CR>', { desc = '[O]Obsidian [T]ags' })
+      vim.keymap.set('n', '<leader>ow', ':ObsidianWorkspace<CR>', { desc = '[O]Obsidian [W]orkspace' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>/', function()
@@ -696,6 +702,15 @@ require('lazy').setup({
         gdtoolkit = {}, -- gdscript
       }
 
+      -- local lspconfig = require 'lspconfig'
+      -- for server, config in pairs(servers) do
+      --   -- passing config.capabilities to blink.cmp merges with the capabilities
+      --   -- in your
+      --   -- `opts[server].capabilities, if you've defined it
+      --   config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
+      --   lspconfig[server].setup(config)
+      -- end
+
       -- Ensure the servers and tools above are installed
       --
       -- To check the current status of installed tools and/or manually install
@@ -856,7 +871,15 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        menu = { border = 'rounded' },
+        menu = {
+          border = 'rounded',
+          draw = {
+            columns = {
+              { 'label', 'label_description', gap = 1 },
+              { 'kind_icon', 'kind' },
+            },
+          },
+        },
         documentation = { auto_show = false, auto_show_delay_ms = 500 },
       },
 
@@ -1594,7 +1617,7 @@ require('lazy').setup({
   {
     'epwalsh/obsidian.nvim',
     version = '*', -- recommended, use latest release instead of latest commit
-    lazy = true,
+    lazy = false,
     ft = 'markdown',
     -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
     -- event = {
