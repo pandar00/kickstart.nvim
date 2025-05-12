@@ -34,7 +34,7 @@ vim.opt.foldlevel = 99
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
-vim.opt.relativenumber = true
+-- vim.opt.relativenumber = true
 -- show both absolute and relative number
 -- vim.o.statuscolumn = '%s %l %r '
 -- Also can have it call custom function
@@ -112,8 +112,12 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('i', '<C-c>', '<esc>', { noremap = true })
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
+vim.keymap.set('n', '[d', function()
+  vim.diagnostic.jump { count = -1, float = true }
+end, { desc = 'Go to previous [D]iagnostic message' })
+vim.keymap.set('n', ']d', function()
+  vim.diagnostic.jump { count = 1, float = true }
+end, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -217,6 +221,12 @@ require('lazy').setup({
   -- is generally not needed
   -- (tag: indent)
   -- https://github.com/tpope/vim-sleuth
+  {
+    't-troebst/perfanno.nvim',
+    config = function()
+      require('perfanno').setup()
+    end,
+  },
   { 'tpope/vim-sleuth' },
 
   -- "gc" to comment visual regions/lines; what enables 'gcc'
@@ -676,9 +686,6 @@ require('lazy').setup({
         gopls = {}, -- Golang
         pyright = {}, -- Python
         marksman = {}, -- Markdown
-        -- tailwindcss = {}, -- ?
-        -- svelte = {}, -- svelt
-        -- zls = {}, -- Ziglang
         bashls = {}, -- bash scripts
         dockerls = {}, -- Docker files
         yamlls = {},
@@ -737,6 +744,7 @@ require('lazy').setup({
       },
     },
     opts = {
+      log_level = vim.log.levels.DEBUG,
       notify_on_error = false,
       format_on_save = function(bufnr)
         -- Disable "format_on_save lsp_fallback" for languages that don't
@@ -1096,6 +1104,9 @@ require('lazy').setup({
         enable = true,
         update_root = true,
       },
+      filters = {
+        exclude = { '.env.local' },
+      },
       view = {
         signcolumn = 'auto',
         -- A table indicates that the view should be dynamically sized based on the longest
@@ -1248,7 +1259,7 @@ require('lazy').setup({
           },
         },
       },
-      extensions = { 'neo-tree', 'nvim-tree' },
+      extensions = { 'nvim-tree' },
     },
   },
 
@@ -1579,19 +1590,37 @@ require('lazy').setup({
       }
     end,
   },
-  {
-    -- https://github.com/luckasRanarison/tailwind-tools.nvim
-    'luckasRanarison/tailwind-tools.nvim',
-    name = 'tailwind-tools',
-    build = ':UpdateRemotePlugins',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-      'nvim-telescope/telescope.nvim', -- optional
-      'neovim/nvim-lspconfig', -- optional
-    },
-    opts = {}, -- your configuration
-  },
 
+  {
+    'epwalsh/obsidian.nvim',
+    version = '*', -- recommended, use latest release instead of latest commit
+    lazy = true,
+    ft = 'markdown',
+    -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
+    -- event = {
+    --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
+    --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/*.md"
+    --   -- refer to `:h file-pattern` for more examples
+    --   "BufReadPre path/to/my-vault/*.md",
+    --   "BufNewFile path/to/my-vault/*.md",
+    -- },
+    dependencies = {
+      -- Required.
+      'nvim-lua/plenary.nvim',
+
+      -- see below for full list of optional dependencies 👇
+    },
+    opts = {
+      workspaces = {
+        {
+          name = 'tiktok',
+          path = '~/Obsidian/tiktok',
+        },
+      },
+
+      -- see below for full list of options 👇
+    },
+  },
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   --
   --  Here are some example plugins that I've included in the Kickstart repository.
