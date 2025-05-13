@@ -100,8 +100,9 @@ vim.opt.expandtab = true
 -- https://neovim.io/doc/user/options.html#'colorcolumn'
 vim.opt.colorcolumn = '100'
 
--- Required for Obsidian
-vim.opt.conceallevel = 3
+-- https://github.com/epwalsh/obsidian.nvim
+-- https://github.com/epwalsh/obsidian.nvim/issues/286
+vim.opt.conceallevel = 2
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -460,9 +461,10 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
+      vim.keymap.set('n', '<leader>oo', ':ObsidianOpen<CR>', { desc = '[O]bsidian [O]pen' })
+      vim.keymap.set('n', '<leader>ow', ':ObsidianWorkspace<CR>', { desc = '[O]bsidian [W]orkspace' })
+      vim.keymap.set('n', '<leader>ot', ':ObsidianTags<CR>', { desc = '[O]bsidian [T]ags' })
       vim.keymap.set('n', '<leader>so', ':ObsidianSearch<CR>', { desc = '[S]earch [O]bsidian' })
-      vim.keymap.set('n', '<leader>ot', ':ObsidianTags<CR>', { desc = '[O]Obsidian [T]ags' })
-      vim.keymap.set('n', '<leader>ow', ':ObsidianWorkspace<CR>', { desc = '[O]Obsidian [W]orkspace' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>/', function()
@@ -667,14 +669,18 @@ require('lazy').setup({
       --  By default, Neovim doesn't support everything that is in the LSP specification.
       --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
-      local capabilities = require('blink.cmp').get_lsp_capabilities()
-
-      -- Neovim hasn't added foldingRange to default capabilities, users must add it manually
-      -- See https://github.com/kevinhwang91/nvim-ufo
-      capabilities.textDocument.foldingRange = {
-        dynamicRegistration = false,
-        lineFoldingOnly = true,
+      local capabilities = {
+        textDocument = {
+          foldingRange = {
+            dynamicRegistration = false,
+            lineFoldingOnly = true,
+          },
+        },
       }
+      capabilities = require('blink.cmp').get_lsp_capabilities(capabilities)
+      vim.lsp.config('*', {
+        capabilities = capabilities,
+      })
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -735,6 +741,7 @@ require('lazy').setup({
         automatic_enable = true,
         -- automatic_installation = false,
       }
+      vim.lsp.enable 'gdscript'
     end,
   },
 
@@ -787,6 +794,7 @@ require('lazy').setup({
         css = { 'prettierd' },
         typescript = { 'prettierd' },
         typescriptreact = { 'prettierd' },
+        gdscript = { 'gdformat' },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
@@ -874,13 +882,42 @@ require('lazy').setup({
         menu = {
           border = 'rounded',
           draw = {
+            treesitter = { 'lsp' },
             columns = {
-              { 'label', 'label_description', gap = 1 },
-              { 'kind_icon', 'kind' },
+              { 'kind_icon', 'label', 'label_description', gap = 1 },
+              { 'kind' },
+            },
+            components = {
+              kind_icon = {
+                text = function(ctx)
+                  local kind_icon, _, _ = require('mini.icons').get('lsp', ctx.kind)
+                  return kind_icon
+                end,
+                -- (optional) use highlights from mini.icons
+                highlight = function(ctx)
+                  local _, hl, _ = require('mini.icons').get('lsp', ctx.kind)
+                  return hl
+                end,
+              },
+              kind = {
+                -- (optional) use highlights from mini.icons
+                highlight = function(ctx)
+                  local _, hl, _ = require('mini.icons').get('lsp', ctx.kind)
+                  return hl
+                end,
+              },
             },
           },
         },
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        -- Unlike rsh7th/nvim-cmp, details are shown in the
+        -- documentation
+        documentation = {
+          auto_show = true,
+          auto_show_delay_ms = 0,
+          window = {
+            border = 'rounded',
+          },
+        },
       },
 
       sources = {
@@ -1612,6 +1649,64 @@ require('lazy').setup({
         },
       }
     end,
+  },
+  {
+    'epwalsh/obsidian.nvim',
+    version = '*', -- recommended, use latest release instead of latest commit
+    lazy = false, -- want to always be able to search notes
+    ft = 'markdown',
+    -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
+    -- event = {
+    --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
+    --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/*.md"
+    --   -- refer to `:h file-pattern` for more examples
+    --   "BufReadPre path/to/my-vault/*.md",
+    --   "BufNewFile path/to/my-vault/*.md",
+    -- },
+    dependencies = {
+      -- Required.
+      'nvim-lua/plenary.nvim',
+
+      -- see below for full list of optional dependencies 👇
+    },
+    opts = {
+      workspaces = {
+        {
+          name = 'personal',
+          path = '~/Documents/universe',
+        },
+      },
+
+      -- see below for full list of options 👇
+    },
+  },
+  {
+    -- Image viewer
+    -- https://github.com/3rd/image.nvim?tab=readme-ov-file#quick-start-for-the-best-experience
+    '3rd/image.nvim',
+    build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
+    opts = {
+      processor = 'magick_cli',
+      integrations = {
+        markdown = {
+          only_render_image_at_cursor = true,
+          -- floating_windows = true,
+          resolve_image_path = function(document_path, image_path, fallback)
+            local obsidian_client = require('obsidian').get_client()
+            -- local new_image_path = obsidian_client:vault_relative_path(image_path).filename
+            local new_image_path = tostring(obsidian_client:vault_root():joinpath(image_path))
+
+            if vim.fn.filereadable(new_image_path) == 1 then
+              print 'file exists at and readable'
+              return new_image_path
+            else
+              print 'fallback'
+              return fallback(document_path, image_path)
+            end
+          end,
+        },
+      },
+    },
   },
 
   {
