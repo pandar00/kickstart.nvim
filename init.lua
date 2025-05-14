@@ -725,6 +725,9 @@ require('lazy').setup({
         automatic_enable = true,
         -- automatic_installation = false,
       }
+      -- need to manually add this for godot because godot's LSP
+      -- is bundled with Godot engine and mason-lspconfig only auto enables
+      -- mason installed LSPs
       vim.lsp.enable 'gdscript'
     end,
   },
@@ -906,8 +909,16 @@ require('lazy').setup({
       sources = {
         default = { 'lsp', 'path', 'snippets', 'lazydev' },
         providers = {
-          lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+          lazydev = {
+            module = 'lazydev.integrations.blink',
+            score_offset = 100,
+          },
         },
+        -- transform_items = function(_, items)
+        --   return vim.tbl_filter(function(item)
+        --     return item.kind ~= require('blink.cmp.types').CompletionItemKind.Snippet
+        --   end, items)
+        -- end,
       },
 
       snippets = { preset = 'luasnip' },
@@ -919,7 +930,16 @@ require('lazy').setup({
       -- the rust implementation via `'prefer_rust_with_warning'`
       --
       -- See :h blink-cmp-config-fuzzy for more information
-      fuzzy = { implementation = 'lua' },
+      fuzzy = {
+        -- sorts = {
+        --   'exact',
+        --   'score',
+        --   'sort_text',
+        -- },
+        -- https://cmp.saghen.dev/configuration/reference.html#fuzzy
+        use_frecency = true,
+        implementation = 'lua',
+      },
 
       -- Shows a signature help window while you type arguments for a function
       signature = {
@@ -1632,7 +1652,7 @@ require('lazy').setup({
   },
   {
     -- https://github.com/luckasRanarison/tailwind-tools.nvim
-    'luckas Ranarison/tailwind-tools.nvim',
+    'luckasRanarison/tailwind-tools.nvim',
     name = 'tailwind-tools',
     build = ':UpdateRemotePlugins',
     dependencies = {
