@@ -20,6 +20,10 @@ vim.g.have_nerd_font = true
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+-- NOTE: SQL related plugin maps C-C to completion
+-- https://github.com/hrsh7th/nvim-compe/issues/286#issuecomment-805140394
+vim.g.omni_sql_no_default_maps = 1
+
 -- optionally enable 24-bit colour
 vim.opt.termguicolors = true
 
