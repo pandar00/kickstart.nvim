@@ -784,7 +784,7 @@ require('lazy').setup({
           return nil
         else
           return {
-            timeout_ms = 500,
+            timeout_ms = 1500,
             lsp_format = 'fallback',
           }
         end
@@ -933,6 +933,21 @@ require('lazy').setup({
           lazydev = {
             module = 'lazydev.integrations.blink',
             score_offset = 100,
+          },
+          snippets = {
+            min_keyword_length = 2,
+            score_offset = 4,
+          },
+          lsp = {
+            score_offset = 3,
+          },
+          path = {
+            min_keyword_length = 3,
+            score_offset = 2,
+          },
+          buffer = {
+            min_keyword_length = 5,
+            score_offset = 1,
           },
         },
         -- transform_items = function(_, items)
