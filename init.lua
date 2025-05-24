@@ -1735,6 +1735,13 @@ require('lazy').setup({
     },
   },
   {
+    -- life is too easy, why not make it hard
+    'm4xshen/hardtime.nvim',
+    lazy = false,
+    dependencies = { 'MunifTanjim/nui.nvim' },
+    opts = {},
+  },
+  {
     -- Image viewer
     -- https://github.com/3rd/image.nvim?tab=readme-ov-file#quick-start-for-the-best-experience
     '3rd/image.nvim',
