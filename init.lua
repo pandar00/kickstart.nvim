@@ -215,6 +215,29 @@ vim.api.nvim_create_autocmd({ 'BufReadPost' }, {
   end,
 })
 
+-- Godot
+-- paths to check for project.godot file
+local paths_to_check = { '/', '/../' }
+local is_godot_project = false
+local godot_project_path = ''
+local cwd = vim.fn.getcwd()
+
+-- iterate over paths and check
+for key, value in pairs(paths_to_check) do
+  if vim.uv.fs_stat(cwd .. value .. 'project.godot') then
+    is_godot_project = true
+    godot_project_path = cwd .. value
+    break
+  end
+end
+
+-- check if server is already running in godot project path
+local is_server_running = vim.uv.fs_stat(godot_project_path .. '/server.pipe')
+-- start server, if not already running
+if is_godot_project and not is_server_running then
+  vim.fn.serverstart(godot_project_path .. '/server.pipe')
+end
+
 -- [[ Configure and install plugins ]]
 -- https://github.com/folke/lazy.nvim
 -- Note to be confused with LazyVim which is a pre-packaged Neovim (also uses lazy.nvim)
@@ -916,6 +939,21 @@ require('lazy').setup({
           lazydev = {
             module = 'lazydev.integrations.blink',
             score_offset = 100,
+          },
+          snippets = {
+            min_keyword_length = 2,
+            score_offset = 4,
+          },
+          lsp = {
+            score_offset = 3,
+          },
+          path = {
+            min_keyword_length = 3,
+            score_offset = 2,
+          },
+          buffer = {
+            min_keyword_length = 5,
+            score_offset = 1,
           },
         },
         -- transform_items = function(_, items)
