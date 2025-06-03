@@ -1203,6 +1203,14 @@ require('lazy').setup({
   {
     'nvim-tree/nvim-tree.lua',
     opts = {
+      filters = {
+        custom = {
+          '*.uid', -- godot uid file
+        },
+        exclude = {
+          '.codebase',
+        },
+      },
       sync_root_with_cwd = true,
       respect_buf_cwd = true,
       update_focused_file = {
