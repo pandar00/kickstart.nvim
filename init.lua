@@ -1555,6 +1555,10 @@ require('lazy').setup({
     init = function()
       vim.g.VM_leader = '<space>v'
       vim.g.VM_add_cursor_at_pos_no_mappings = 1
+      vim.g.VM_maps = {
+        ['Add Cursor Down'] = '<C-j>',
+        ['Add Cursor Up'] = '<C-k>',
+      }
     end,
   },
 
