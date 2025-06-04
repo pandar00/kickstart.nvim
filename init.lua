@@ -38,9 +38,9 @@ vim.opt.foldlevel = 99
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 -- show both absolute and relative number
--- vim.o.statuscolumn = '%s %l %r '
+vim.o.statuscolumn = '%s %l %r '
 -- Also can have it call custom function
 -- vim.o.statuscolumn = "%!v:lua.require('statuscolumn').number()"
 
@@ -1556,8 +1556,8 @@ require('lazy').setup({
       vim.g.VM_leader = '<space>v'
       vim.g.VM_add_cursor_at_pos_no_mappings = 1
       vim.g.VM_maps = {
-        ['Add Cursor Down'] = '<C-j>',
-        ['Add Cursor Up'] = '<C-k>',
+        ['Add Cursor Down'] = '<M-j>',
+        ['Add Cursor Up'] = '<M-k>',
       }
     end,
   },
