@@ -808,6 +808,7 @@ require('lazy').setup({
         typescript = { 'prettierd' },
         typescriptreact = { 'prettierd' },
         gdscript = { 'gdformat' },
+        html = { 'prettierd' },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
@@ -940,10 +941,6 @@ require('lazy').setup({
             module = 'lazydev.integrations.blink',
             score_offset = 100,
           },
-          snippets = {
-            min_keyword_length = 2,
-            score_offset = 4,
-          },
           lsp = {
             score_offset = 3,
           },
@@ -951,9 +948,13 @@ require('lazy').setup({
             min_keyword_length = 3,
             score_offset = 2,
           },
+          snippets = {
+            min_keyword_length = 2,
+            score_offset = 100,
+          },
           buffer = {
             min_keyword_length = 5,
-            score_offset = 1,
+            score_offset = -3,
           },
         },
         -- transform_items = function(_, items)
@@ -973,11 +974,14 @@ require('lazy').setup({
       --
       -- See :h blink-cmp-config-fuzzy for more information
       fuzzy = {
-        -- sorts = {
-        --   'exact',
-        --   'score',
-        --   'sort_text',
-        -- },
+        sorts = {
+          'score',
+          'exact',
+          function(a, b)
+            return a.source_id < b.source_id
+          end,
+          'sort_text',
+        },
         -- https://cmp.saghen.dev/configuration/reference.html#fuzzy
         use_frecency = true,
         implementation = 'lua',
@@ -1742,13 +1746,13 @@ require('lazy').setup({
       -- see below for full list of options 👇
     },
   },
-  {
-    -- life is too easy, why not make it hard
-    'm4xshen/hardtime.nvim',
-    lazy = false,
-    dependencies = { 'MunifTanjim/nui.nvim' },
-    opts = {},
-  },
+  -- {
+  --   -- life is too easy, why not make it hard
+  --   'm4xshen/hardtime.nvim',
+  --   lazy = false,
+  --   dependencies = { 'MunifTanjim/nui.nvim' },
+  --   opts = {},
+  -- },
   {
     -- Image viewer
     -- https://github.com/3rd/image.nvim?tab=readme-ov-file#quick-start-for-the-best-experience
