@@ -952,6 +952,10 @@ require('lazy').setup({
 
       sources = {
         default = { 'codeium', 'lsp', 'path', 'snippets', 'lazydev' },
+        per_filetype = {
+          -- don't want AI assistance in markdown
+          markdown = { 'lsp', 'path', 'snippets', 'lazydev' },
+        },
         providers = {
           codeium = {
             name = 'Codeium',
@@ -1644,7 +1648,7 @@ require('lazy').setup({
     opts = {}, -- your configuration
   },
   {
-    'epwalsh/obsidian.nvim',
+    'obsidian-nvim/obsidian.nvim',
     version = '*', -- recommended, use latest release instead of latest commit
     lazy = false, -- want to always be able to search notes
     ft = 'markdown',
@@ -1663,6 +1667,10 @@ require('lazy').setup({
       -- see below for full list of optional dependencies 👇
     },
     opts = {
+      completion = {
+        nvim_cmp = false, -- if using nvim-cmp, otherwise set to false
+        blink = true, -- if using nvim-cmp, otherwise set to false
+      },
       workspaces = {
         {
           name = 'personal',
