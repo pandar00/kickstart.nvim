@@ -169,6 +169,7 @@ vim.keymap.set('n', '<C-F4>', function()
   --     return
   -- endif
   vim.cmd.UndotreeToggle()
+
   -- option 1. reset width on reopen
   -- option 2. do not allow neotree and undotree to open at the same time
   -- for _, win in pairs(vim.api.nvim_tabpage_list_wins(0)) do
@@ -426,10 +427,19 @@ require('lazy').setup({
       require('telescope').setup {
         -- override defaults
         defaults = {
+          path_display = {
+            shorten = {
+              len = 4,
+              exclude = { -1 },
+            },
+          },
           mappings = {
             i = {
               ['<esc>'] = actions.close,
             },
+          },
+          file_ignore_patterns = {
+            '.excalidraw.md',
           },
         },
 
@@ -464,7 +474,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sb', builtin.buffers, { desc = '[S]earch [B]uffers' })
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>si', builtin.highlights, { desc = '[S]earch h[i]ghlight' })
-      vim.keymap.set('n', '<leader>sc', builtin.colorscheme, { desc = '[S]earch [c]olorscheme' })
+      vim.keymap.set('n', '<leader>sc', function()
+        builtin.colorscheme { enable_preview = true }
+      end, { desc = '[S]earch [c]olorscheme' })
       -- Shows a list of all filetypes and changes the current buffer's filetype on select
       -- vim.keymap.set('n', '<leader>st', builtin.filetypes, { desc = '[S]earch File[t]ypes' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
@@ -823,6 +835,8 @@ require('lazy').setup({
     event = 'VimEnter',
     version = '1.*',
     dependencies = {
+
+      'Exafunction/codeium.nvim',
       -- Snippet Engine
       {
         'L3MON4D3/LuaSnip',
@@ -935,8 +949,13 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'codeium', 'lsp', 'path', 'snippets', 'lazydev' },
         providers = {
+          codeium = {
+            name = 'Codeium',
+            module = 'codeium.blink',
+            async = true,
+          },
           lazydev = {
             module = 'lazydev.integrations.blink',
             score_offset = 100,
@@ -995,115 +1014,6 @@ require('lazy').setup({
     },
   },
 
-  -- snippet = {
-  --   expand = function(args)
-  --     luasnip.lsp_expand(args.body)
-  --   end,
-  -- },
-  -- window = {
-  --   completion = cmp.config.window.bordered(),
-  --   documentation = cmp.config.window.bordered(),
-  -- },
-  -- completion = { completeopt = 'menu,menuone,noinsert' },
-  -- formatting = {
-  --   format = require('lspkind').cmp_format {
-  --     before = require('tailwind-tools.cmp').lspkind_format,
-  --   },
-  -- },
-  --
-  -- -- For an understanding of why these mappings were
-  -- -- chosen, you will need to read `:help ins-completion`
-  -- --
-  -- -- No, but seriously. Please read `:help ins-completion`, it is really good!
-  -- mapping = cmp.mapping.preset.insert {
-  --   -- Select the [n]ext item
-  --   ['<C-n>'] = cmp.mapping.select_next_item(),
-  --   -- Select the [p]revious item
-  --   ['<C-p>'] = cmp.mapping.select_prev_item(),
-  --
-  --   -- Scroll the documentation window [b]ack / [f]orward
-  --   ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-  --   ['<C-f>'] = cmp.mapping.scroll_docs(4),
-  --
-  --   -- Accept ([y]es) the completion.
-  --   --  This will auto-import if your LSP supports it.
-  --   --  This will expand snippets if the LSP sent a snippet.
-  --   -- Problem with <CR> or <Tab> is that it can't distinguish selection vs newline insert
-  --   -- Not sure why C-CR doesn't work
-  --   -- ['<C-CR>'] = cmp.mapping.confirm { select = true },
-  --   ['<C-y>'] = cmp.mapping.confirm { select = true },
-  --   -- Selection must be distinct from character input
-  --   -- ['<CR>'] = cmp.mapping.confirm { select = true },
-  --
-  --   -- Manually trigger a completion from nvim-cmp.
-  --   --  Generally you don't need this, because nvim-cmp will display
-  --   --  completions whenever it has completion options available.
-  --   ['<C-Space>'] = cmp.mapping.complete {},
-  --
-  --   -- INFO: Important
-  --   -- Think of <c-l> as moving to the right of your snippet expansion.
-  --   --  So if you have a snippet that's like:
-  --   --  function $name($args)
-  --   --    $body
-  --   --  end
-  --   --
-  --   -- <c-l> will move you to the right of each of the expansion locations.
-  --   -- <c-h> is similar, except moving you backwards.
-  --   ['<C-l>'] = cmp.mapping(function()
-  --     if luasnip.expand_or_locally_jumpable() then
-  --       luasnip.expand_or_jump()
-  --     end
-  --   end, { 'i', 's' }),
-  --   ['<C-h>'] = cmp.mapping(function()
-  --     if luasnip.locally_jumpable(-1) then
-  --       luasnip.jump(-1)
-  --     end
-  --   end, { 'i', 's' }),
-  --
-  --   -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
-  --   --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
-  -- },
-  -- -- NOTE: See cmp-config.preselect and *cmp-config.view.entries.selection_order*
-  -- -- for how the preselect works
-  -- -- NOTE: Nvim-cmp respects the LSP (Language Server Protocol) specification.
-  -- -- The LSP spec defines the `preselect` feature for completion.
-  -- --
-  -- -- "None" option still preselects but selects the first one as desired
-  -- preselect = cmp.PreselectMode.None,
-  --
-  -- sources = {
-  --   { name = 'nvim_lsp', group_index = 2 },
-  --   -- { name = 'copilot', group_index = 2 },
-  --   { name = 'luasnip', group_index = 2 },
-  --   -- { name = 'codeium', group_index = 2 },
-  --   { name = 'path', group_index = 2 },
-  -- },
-  --
-  -- -- Other examples
-  -- -- https://github.com/xero/dotfiles/blob/a48855d2a06d0fecec85e02b72139e4e2b5fff6e/neovim/.config/nvim/lua/plugins/copilot.lua#L216
-  -- -- https://github.com/xero/dotfiles/blob/a48855d2a06d0fecec85e02b72139e4e2b5fff6e/neovim/.config/nvim/lua/plugins/cmp.lua#L49
-  -- -- -------------------------------------
-  -- -- Codeium?
-  -- -- https://github.com/ecosse3/nvim/blob/344706db1ad7c0cf7112714dd50eadc647fb81fc/lua/plugins/cmp.lua#L125
-  -- sorting = {
-  --   priority_weight = 2,
-  --   comparators = {
-  --     -- require('copilot_cmp.comparators').prioritize,
-  --
-  --     -- Below is the default comparitor list and order for nvim-cmp
-  --     cmp.config.compare.offset,
-  --     -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
-  --     cmp.config.compare.exact,
-  --     cmp.config.compare.score,
-  --     cmp.config.compare.recently_used,
-  --     cmp.config.compare.locality,
-  --     cmp.config.compare.kind,
-  --     cmp.config.compare.sort_text,
-  --     cmp.config.compare.length,
-  --     cmp.config.compare.order,
-  --   },
-  -- },
-
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -1118,11 +1028,6 @@ require('lazy').setup({
           comments = { italic = false }, -- Disable italics in comments
         },
       }
-
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'onedark'
     end,
   },
 
@@ -1598,12 +1503,13 @@ require('lazy').setup({
     end,
   },
 
+  -- https://github.com/olimorris/onedarkpro.nvim
   {
-    -- Theme
-    'navarasu/onedark.nvim',
-    opts = {
-      style = 'deep',
-    },
+    'olimorris/onedarkpro.nvim',
+    priority = 1000, -- Ensure it loads first
+    config = function()
+      vim.cmd.colorscheme 'onedark'
+    end,
   },
 
   {
@@ -1785,7 +1691,17 @@ require('lazy').setup({
       },
     },
   },
-
+  {
+    'Exafunction/windsurf.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'hrsh7th/nvim-cmp',
+    },
+    config = function()
+      require('codeium').setup {}
+    end,
+  },
+  { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   --
   --  Here are some example plugins that I've included in the Kickstart repository.
