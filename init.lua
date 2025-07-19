@@ -428,9 +428,10 @@ require('lazy').setup({
         -- override defaults
         defaults = {
           path_display = {
+            'filename_first',
             shorten = {
               len = 4,
-              exclude = { -1 },
+              exclude = { -1, -2 },
             },
           },
           mappings = {
@@ -441,6 +442,7 @@ require('lazy').setup({
           file_ignore_patterns = {
             '.excalidraw.md',
           },
+          dynamic_preview_title = true,
         },
 
         -- override pickers
@@ -1120,6 +1122,20 @@ require('lazy').setup({
           '.codebase',
         },
       },
+      renderer = {
+        root_folder_label = false,
+      },
+      actions = {
+        file_popup = {
+          open_win_config = {
+            -- col = 1,
+            -- row = 1,
+            -- relative = 'cursor',
+            border = 'rounded',
+            -- style = 'minimal',
+          },
+        },
+      },
       sync_root_with_cwd = true,
       respect_buf_cwd = true,
       update_focused_file = {
@@ -1243,6 +1259,7 @@ require('lazy').setup({
         section_separators = { left = '█', right = '█' },
         -- component_separators = { left = '', right = ''},
         -- section_separators = { left = '', right = ''},
+        globalstatus = true,
       },
       sections = {
         lualine_x = {
@@ -1273,8 +1290,8 @@ require('lazy').setup({
         lualine_c = {
           {
             'filename',
-            path = 1, -- relative path
-            shortening_target = 40, -- shortens to leave N chars for other components
+            path = 3, -- relative path
+            -- shortening_target = 40, -- shortens to leave N chars for other components
           },
         },
       },
