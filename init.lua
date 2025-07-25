@@ -115,6 +115,11 @@ vim.opt.conceallevel = 2
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+vim.keymap.set('n', '=', [[<cmd>vertical resize +2<cr>]]) -- make the window biger vertically
+vim.keymap.set('n', '-', [[<cmd>vertical resize -1<cr>]]) -- make the window smaller vertically
+vim.keymap.set('n', '+', [[<cmd>horizontal resize +2<cr>]]) -- make the window bigger horizontally by pressing shift and =
+vim.keymap.set('n', '_', [[<cmd>horizontal resize -2<cr>]]) -- make the window smaller horizontally by pressing shift and -
+
 -- <C-c> causes lua scripts to abort
 -- https://github.com/kevinhwang91/nvim-ufo/issues/202#issuecomment-1950969654
 vim.keymap.set('i', '<C-c>', '<esc>', { noremap = true })
@@ -795,7 +800,7 @@ require('lazy').setup({
         go = { 'gofumpt', 'goimports' },
         sh = { 'shellcheck', 'shfmt' },
         -- Conform can also run multiple formatters sequentially
-        python = { 'isort', 'black' },
+        python = { 'autoflake', 'isort', 'black' },
 
         yaml = { 'yamlfmt' },
         -- Install https://github.com/fsouza/prettierd
@@ -803,11 +808,13 @@ require('lazy').setup({
         typescript = { 'prettierd' },
         typescriptreact = { 'prettierd' },
         gdscript = { 'gdformat' },
+        sql = { 'sleek' },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
         -- javascript = { { "prettierd", "prettier" } },
         terraform = { 'terraform_fmt' },
+        markdown = { 'markdownlint-cli2' },
       },
     },
   },
@@ -873,6 +880,7 @@ require('lazy').setup({
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
+        ['<C-s>'] = { 'show', 'show_documentation', 'hide_documentation' },
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -1293,10 +1301,10 @@ require('lazy').setup({
       -- Override mappings with custom duration.
       local mapping_funcs = {
         ['<C-u>'] = function()
-          neoscroll.ctrl_u { duration = 80 }
+          neoscroll.ctrl_u { duration = 0 }
         end,
         ['<C-d>'] = function()
-          neoscroll.ctrl_d { duration = 80 }
+          neoscroll.ctrl_d { duration = 0 }
         end,
       }
       local modes = { 'n', 'v', 'x' }
@@ -1594,6 +1602,18 @@ require('lazy').setup({
 
   {
     -- https://github.com/nvim-neotest/neotest
+    -- NOTE: Yanking a text from output is not an issue with neotest but unimplemented
+    -- feature in Neovim.
+    -- Flow:
+    --   neotest -> saves test output in file -> write to buffer -> create term window
+    -- Output may contain ANSI escape chars so they must be opened by terminal.
+    -- History:
+    -- Terminal window reflow is implmeneted so adjusting window width will automatcially
+    -- adjust the text, but softwrapping terminal output is not implemented
+    -- https://github.com/neovim/neovim/pull/21124#issuecomment-2354869610
+    -- See https://www.reddit.com/r/neovim/comments/1dak3rw/longs_lines_in_terminal_are_copied_with_newlines/
+    --
+    -- NOTE: copen windowd is currently set by QuickfixCmdPost in go.nvim plugin
     'nvim-neotest/neotest',
     dependencies = {
       'nvim-neotest/nvim-nio',
@@ -1635,6 +1655,10 @@ require('lazy').setup({
           skipped = 'NeotestSkipped',
           test = 'NeotestTest',
         },
+        -- floating changes the style of the floating window (e.g. output when 'o' is pressed)
+        -- NOTE: changing max_width changes the window width but the output is still
+        -- splitted with a newline that doesn't fit in the window. It implies there
+        -- the newline is filled from upstream
         floating = {
           border = 'rounded',
           max_height = 0.6,
@@ -1662,7 +1686,15 @@ require('lazy').setup({
         },
         output_panel = {
           enabled = true,
-          open = 'botright split | resize 15',
+          -- this don't appeart to affect the failure result quickfix
+          open = 'botright vsplit | resize 15',
+        },
+        quickfix = {
+          -- open = false,
+          -- open = function()
+          --   -- local nio = require 'nio'
+          --   -- nio.api.nvim_command 'copen botright'
+          -- end,
         },
         run = {
           enabled = true,
@@ -1676,6 +1708,7 @@ require('lazy').setup({
             width = 120,
           },
         },
+        -- summary is the summary of all discovered tests in a tree
         summary = {
           enabled = true,
           expand_errors = true,
@@ -1691,6 +1724,8 @@ require('lazy').setup({
             stop = 'u',
           },
         },
+        -- TRACE = 0, DEBUG = 1, INFO = 2, WARN = 3 ERROR = 4, OFF = 5,
+        -- log_level = 0,
       }
     end,
   },
@@ -1752,7 +1787,16 @@ require('lazy').setup({
       },
     },
   },
-
+  {
+    'amitds1997/remote-nvim.nvim',
+    version = '*', -- Pin to GitHub releases
+    dependencies = {
+      'nvim-lua/plenary.nvim', -- For standard functions
+      'MunifTanjim/nui.nvim', -- To build the plugin UI
+      'nvim-telescope/telescope.nvim', -- For picking b/w different remote methods
+    },
+    config = true,
+  },
   {
     'epwalsh/obsidian.nvim',
     version = '*', -- recommended, use latest release instead of latest commit
