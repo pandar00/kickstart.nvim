@@ -1708,6 +1708,10 @@ require('lazy').setup({
           path = '~/Documents/universe',
         },
       },
+      ui = {
+        -- explicitly set to empty otherwise it'll conflict with render-markdown plugin
+        checkboxes = {},
+      },
       checkbox = {
         order = { ' ', 'x' },
       },
@@ -1843,7 +1847,11 @@ require('lazy').setup({
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
-    opts = {},
+    opts = {
+      bullet = {
+        right_pad = 1,
+      },
+    },
   },
 
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
