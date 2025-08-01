@@ -163,6 +163,11 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 
 vim.keymap.set("n", "<C-F1>", ":NvimTreeToggle<CR>")
 
+vim.keymap.set("n", "=", [[<cmd>vertical resize +2<cr>]]) -- make the window biger vertically
+vim.keymap.set("n", "-", [[<cmd>vertical resize -2<cr>]]) -- make the window smaller vertically
+vim.keymap.set("n", "+", [[<cmd>horizontal resize +2<cr>]]) -- make the window bigger horizontally by pressing shift and =
+vim.keymap.set("n", "_", [[<cmd>horizontal resize -2<cr>]]) -- make the window smaller horizontally by pressing shift and -
+
 -- Undotree
 -- https://github.com/mbbill/undotree
 vim.keymap.set("n", "<C-F4>", function()
@@ -178,6 +183,7 @@ vim.keymap.set("n", "<C-F4>", function()
   --     return
   -- endif
   vim.cmd.UndotreeToggle()
+
   -- option 1. reset width on reopen
   -- option 2. do not allow neotree and undotree to open at the same time
   -- for _, win in pairs(vim.api.nvim_tabpage_list_wins(0)) do
@@ -223,6 +229,36 @@ vim.api.nvim_create_autocmd({ "BufReadPost" }, {
     -- vim.cmd("normal: g;")
   end,
 })
+
+-- make quickfix windows always span over bottom of all vertical windows
+-- vim.api.nvim_create_autocmd({ 'QuickFixCmdPost' }, {
+--   pattern = { '[^l]*' },
+--   nested = true,
+--   command = 'botright cwindow',
+-- })
+
+-- Godot
+-- paths to check for project.godot file
+local paths_to_check = { "/", "/../" }
+local is_godot_project = false
+local godot_project_path = ""
+local cwd = vim.fn.getcwd()
+
+-- iterate over paths and check
+for key, value in pairs(paths_to_check) do
+  if vim.uv.fs_stat(cwd .. value .. "project.godot") then
+    is_godot_project = true
+    godot_project_path = cwd .. value
+    break
+  end
+end
+
+-- check if server is already running in godot project path
+local is_server_running = vim.uv.fs_stat(godot_project_path .. "/server.pipe")
+-- start server, if not already running
+if is_godot_project and not is_server_running then
+  vim.fn.serverstart(godot_project_path .. "/server.pipe")
+end
 
 -- [[ Configure and install plugins ]]
 -- https://github.com/folke/lazy.nvim
@@ -373,11 +409,22 @@ require("lazy").setup({
       require("telescope").setup({
         -- override defaults
         defaults = {
+          path_display = {
+            "filename_first",
+            shorten = {
+              len = 4,
+              exclude = { -1, -2 },
+            },
+          },
           mappings = {
             i = {
               ["<esc>"] = actions.close,
             },
           },
+          file_ignore_patterns = {
+            ".excalidraw.md",
+          },
+          dynamic_preview_title = true,
         },
 
         -- override pickers
@@ -411,7 +458,9 @@ require("lazy").setup({
       vim.keymap.set("n", "<leader>sb", builtin.buffers, { desc = "[S]earch [B]uffers" })
       vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
       vim.keymap.set("n", "<leader>si", builtin.highlights, { desc = "[S]earch h[i]ghlight" })
-      vim.keymap.set("n", "<leader>sc", builtin.colorscheme, { desc = "[S]earch [c]olorscheme" })
+      vim.keymap.set("n", "<leader>sc", function()
+        builtin.colorscheme({ enable_preview = true })
+      end, { desc = "[S]earch [c]olorscheme" })
       -- Shows a list of all filetypes and changes the current buffer's filetype on select
       -- vim.keymap.set('n', '<leader>st', builtin.filetypes, { desc = '[S]earch File[t]ypes' })
       vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
@@ -763,6 +812,7 @@ require("lazy").setup({
         typescript = { "prettierd" },
         typescriptreact = { "prettierd" },
         gdscript = { "gdformat" },
+        html = { "prettierd" },
         sql = { "sleek" },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
@@ -893,14 +943,21 @@ require("lazy").setup({
 
       sources = {
         default = { "lsp", "path", "snippets", "lazydev" },
+        per_filetype = {
+          -- don't want AI assistance in markdown
+          markdown = { "lsp", "path", "snippets", "lazydev" },
+        },
         providers = {
+          -- avante = {
+          --   module = 'blink-cmp-avante',
+          --   name = 'Avante',
+          --   opts = {
+          --     -- options for blink-cmp-avante
+          --   },
+          -- },
           lazydev = {
             module = "lazydev.integrations.blink",
             score_offset = 100,
-          },
-          snippets = {
-            min_keyword_length = 2,
-            score_offset = 4,
           },
           lsp = {
             score_offset = 3,
@@ -909,9 +966,13 @@ require("lazy").setup({
             min_keyword_length = 3,
             score_offset = 2,
           },
+          snippets = {
+            min_keyword_length = 2,
+            score_offset = 100,
+          },
           buffer = {
             min_keyword_length = 5,
-            score_offset = 1,
+            score_offset = -3,
           },
         },
         -- transform_items = function(_, items)
@@ -931,11 +992,14 @@ require("lazy").setup({
       --
       -- See :h blink-cmp-config-fuzzy for more information
       fuzzy = {
-        -- sorts = {
-        --   'exact',
-        --   'score',
-        --   'sort_text',
-        -- },
+        sorts = {
+          "score",
+          "exact",
+          function(a, b)
+            return a.source_id < b.source_id
+          end,
+          "sort_text",
+        },
         -- https://cmp.saghen.dev/configuration/reference.html#fuzzy
         use_frecency = true,
         implementation = "lua",
@@ -948,115 +1012,6 @@ require("lazy").setup({
       },
     },
   },
-
-  -- snippet = {
-  --   expand = function(args)
-  --     luasnip.lsp_expand(args.body)
-  --   end,
-  -- },
-  -- window = {
-  --   completion = cmp.config.window.bordered(),
-  --   documentation = cmp.config.window.bordered(),
-  -- },
-  -- completion = { completeopt = 'menu,menuone,noinsert' },
-  -- formatting = {
-  --   format = require('lspkind').cmp_format {
-  --     before = require('tailwind-tools.cmp').lspkind_format,
-  --   },
-  -- },
-  --
-  -- -- For an understanding of why these mappings were
-  -- -- chosen, you will need to read `:help ins-completion`
-  -- --
-  -- -- No, but seriously. Please read `:help ins-completion`, it is really good!
-  -- mapping = cmp.mapping.preset.insert {
-  --   -- Select the [n]ext item
-  --   ['<C-n>'] = cmp.mapping.select_next_item(),
-  --   -- Select the [p]revious item
-  --   ['<C-p>'] = cmp.mapping.select_prev_item(),
-  --
-  --   -- Scroll the documentation window [b]ack / [f]orward
-  --   ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-  --   ['<C-f>'] = cmp.mapping.scroll_docs(4),
-  --
-  --   -- Accept ([y]es) the completion.
-  --   --  This will auto-import if your LSP supports it.
-  --   --  This will expand snippets if the LSP sent a snippet.
-  --   -- Problem with <CR> or <Tab> is that it can't distinguish selection vs newline insert
-  --   -- Not sure why C-CR doesn't work
-  --   -- ['<C-CR>'] = cmp.mapping.confirm { select = true },
-  --   ['<C-y>'] = cmp.mapping.confirm { select = true },
-  --   -- Selection must be distinct from character input
-  --   -- ['<CR>'] = cmp.mapping.confirm { select = true },
-  --
-  --   -- Manually trigger a completion from nvim-cmp.
-  --   --  Generally you don't need this, because nvim-cmp will display
-  --   --  completions whenever it has completion options available.
-  --   ['<C-Space>'] = cmp.mapping.complete {},
-  --
-  --   -- INFO: Important
-  --   -- Think of <c-l> as moving to the right of your snippet expansion.
-  --   --  So if you have a snippet that's like:
-  --   --  function $name($args)
-  --   --    $body
-  --   --  end
-  --   --
-  --   -- <c-l> will move you to the right of each of the expansion locations.
-  --   -- <c-h> is similar, except moving you backwards.
-  --   ['<C-l>'] = cmp.mapping(function()
-  --     if luasnip.expand_or_locally_jumpable() then
-  --       luasnip.expand_or_jump()
-  --     end
-  --   end, { 'i', 's' }),
-  --   ['<C-h>'] = cmp.mapping(function()
-  --     if luasnip.locally_jumpable(-1) then
-  --       luasnip.jump(-1)
-  --     end
-  --   end, { 'i', 's' }),
-  --
-  --   -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
-  --   --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
-  -- },
-  -- -- NOTE: See cmp-config.preselect and *cmp-config.view.entries.selection_order*
-  -- -- for how the preselect works
-  -- -- NOTE: Nvim-cmp respects the LSP (Language Server Protocol) specification.
-  -- -- The LSP spec defines the `preselect` feature for completion.
-  -- --
-  -- -- "None" option still preselects but selects the first one as desired
-  -- preselect = cmp.PreselectMode.None,
-  --
-  -- sources = {
-  --   { name = 'nvim_lsp', group_index = 2 },
-  --   -- { name = 'copilot', group_index = 2 },
-  --   { name = 'luasnip', group_index = 2 },
-  --   -- { name = 'codeium', group_index = 2 },
-  --   { name = 'path', group_index = 2 },
-  -- },
-  --
-  -- -- Other examples
-  -- -- https://github.com/xero/dotfiles/blob/a48855d2a06d0fecec85e02b72139e4e2b5fff6e/neovim/.config/nvim/lua/plugins/copilot.lua#L216
-  -- -- https://github.com/xero/dotfiles/blob/a48855d2a06d0fecec85e02b72139e4e2b5fff6e/neovim/.config/nvim/lua/plugins/cmp.lua#L49
-  -- -- -------------------------------------
-  -- -- Codeium?
-  -- -- https://github.com/ecosse3/nvim/blob/344706db1ad7c0cf7112714dd50eadc647fb81fc/lua/plugins/cmp.lua#L125
-  -- sorting = {
-  --   priority_weight = 2,
-  --   comparators = {
-  --     -- require('copilot_cmp.comparators').prioritize,
-  --
-  --     -- Below is the default comparitor list and order for nvim-cmp
-  --     cmp.config.compare.offset,
-  --     -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
-  --     cmp.config.compare.exact,
-  --     cmp.config.compare.score,
-  --     cmp.config.compare.recently_used,
-  --     cmp.config.compare.locality,
-  --     cmp.config.compare.kind,
-  --     cmp.config.compare.sort_text,
-  --     cmp.config.compare.length,
-  --     cmp.config.compare.order,
-  --   },
-  -- },
 
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
@@ -1072,11 +1027,6 @@ require("lazy").setup({
           comments = { italic = false }, -- Disable italics in comments
         },
       })
-
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme("onedark")
     end,
   },
 
@@ -1161,6 +1111,28 @@ require("lazy").setup({
   {
     "nvim-tree/nvim-tree.lua",
     opts = {
+      filters = {
+        custom = {
+          "*.uid", -- godot uid file
+        },
+        exclude = {
+          ".codebase",
+        },
+      },
+      renderer = {
+        root_folder_label = false,
+      },
+      actions = {
+        file_popup = {
+          open_win_config = {
+            -- col = 1,
+            -- row = 1,
+            -- relative = 'cursor',
+            border = "rounded",
+            -- style = 'minimal',
+          },
+        },
+      },
       sync_root_with_cwd = true,
       respect_buf_cwd = true,
       update_focused_file = {
@@ -1196,7 +1168,8 @@ require("lazy").setup({
   -- Golang support
   {
     -- Doc is go-nvim
-    "ray-x/go.nvim",
+    -- 'ray-x/go.nvim',
+    "pandar00/go.nvim",
     dependencies = { -- optional packages
       "ray-x/guihua.lua",
       "neovim/nvim-lspconfig",
@@ -1272,6 +1245,7 @@ require("lazy").setup({
         section_separators = { left = "█", right = "█" },
         -- component_separators = { left = '', right = ''},
         -- section_separators = { left = '', right = ''},
+        globalstatus = true,
       },
       sections = {
         lualine_x = {
@@ -1302,8 +1276,8 @@ require("lazy").setup({
         lualine_c = {
           {
             "filename",
-            path = 1, -- relative path
-            shortening_target = 40, -- shortens to leave N chars for other components
+            path = 3, -- relative path
+            -- shortening_target = 40, -- shortens to leave N chars for other components
           },
         },
       },
@@ -1318,9 +1292,21 @@ require("lazy").setup({
       { "nvim-tree/nvim-web-devicons" },
     },
     config = function()
-      require("diffview").setup()
+      require("diffview").setup({
+        enhanced_diff_hl = true,
+        view = {
+          merge_tool = {
+            -- Config for conflicted files in diff views during a merge or rebase.
+            layout = "diff3_mixed",
+            disable_diagnostics = true, -- Temporarily disable diagnostics for diff buffers while in the view.
+            winbar_info = true, -- See |diffview-config-view.x.winbar_info|
+          },
+        },
+      })
       -- FIXME: Get diffview working
       -- vim.keymap.set('n', '<leader>g', ':DiffviewOpen<CR>', { desc = 'Show diagnostic [E]rror messages' })
+      local set = vim.opt -- set options
+      set.fillchars = set.fillchars + "diff:╱"
     end,
   },
   -- show lines around scope/indents
@@ -1484,8 +1470,9 @@ require("lazy").setup({
   },
 
   {
-    "ahmedkhalf/project.nvim",
+    "DrKJeff16/project.nvim",
     dependencies = {
+      "nvim-lua/plenary.nvim",
       "nvim-telescope/telescope.nvim",
     },
     config = function()
@@ -1532,12 +1519,13 @@ require("lazy").setup({
     end,
   },
 
+  -- https://github.com/olimorris/onedarkpro.nvim
   {
-    -- Theme
-    "navarasu/onedark.nvim",
-    opts = {
-      style = "deep",
-    },
+    "olimorris/onedarkpro.nvim",
+    priority = 1000, -- Ensure it loads first
+    config = function()
+      vim.cmd.colorscheme("onedark")
+    end,
   },
 
   {
@@ -1609,6 +1597,11 @@ require("lazy").setup({
             wrap = true,
           },
         },
+        -- quickfix = {
+        --   open = function()
+        --     vim.api.nvim_command 'botright cwindow'
+        --   end,
+        -- },
         icons = {
           child_indent = "│",
           child_prefix = "├",
@@ -1626,17 +1619,10 @@ require("lazy").setup({
           enabled = true,
           open_on_run = true,
         },
+
         output_panel = {
           enabled = true,
-          -- this don't appeart to affect the failure result quickfix
-          open = "botright vsplit | resize 15",
-        },
-        quickfix = {
-          -- open = false,
-          -- open = function()
-          --   -- local nio = require 'nio'
-          --   -- nio.api.nvim_command 'copen botright'
-          -- end,
+          open = "bo split | resize 13",
         },
         run = {
           enabled = true,
@@ -1666,13 +1652,24 @@ require("lazy").setup({
             stop = "u",
           },
         },
-        -- TRACE = 0, DEBUG = 1, INFO = 2, WARN = 3 ERROR = 4, OFF = 5,
-        -- log_level = 0,
+        open = "bo split | resize 13",
       })
     end,
   },
   {
-    "epwalsh/obsidian.nvim",
+    -- https://github.com/luckasRanarison/tailwind-tools.nvim
+    "luckasRanarison/tailwind-tools.nvim",
+    name = "tailwind-tools",
+    build = ":UpdateRemotePlugins",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-telescope/telescope.nvim", -- optional
+      "neovim/nvim-lspconfig", -- optional
+    },
+    opts = {}, -- your configuration
+  },
+  {
+    "obsidian-nvim/obsidian.nvim",
     version = "*", -- recommended, use latest release instead of latest commit
     lazy = false, -- want to always be able to search notes
     ft = "markdown",
@@ -1687,20 +1684,37 @@ require("lazy").setup({
     dependencies = {
       -- Required.
       "nvim-lua/plenary.nvim",
-
       -- see below for full list of optional dependencies 👇
     },
     opts = {
+      legacy_commands = false,
+      completion = {
+        nvim_cmp = false, -- if using nvim-cmp, otherwise set to false
+        blink = true, -- if using nvim-cmp, otherwise set to false
+      },
       workspaces = {
         {
-          name = "personal",
-          path = "~/Documents/universe",
+          name = "tiktok",
+          path = "~/Obsidian/tiktok",
         },
       },
-
+      ui = {
+        -- explicitly set to empty otherwise it'll conflict with render-markdown plugin
+        checkboxes = {},
+      },
+      checkbox = {
+        order = { " ", "x" },
+      },
       -- see below for full list of options 👇
     },
   },
+  -- {
+  --   -- life is too easy, why not make it hard
+  --   'm4xshen/hardtime.nvim',
+  --   lazy = false,
+  --   dependencies = { 'MunifTanjim/nui.nvim' },
+  --   opts = {},
+  -- },
   {
     -- Image viewer
     -- https://github.com/3rd/image.nvim?tab=readme-ov-file#quick-start-for-the-best-experience
@@ -1739,34 +1753,94 @@ require("lazy").setup({
     },
     config = true,
   },
+  { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+  -- {
+  --   'yetone/avante.nvim',
+  --   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+  --   -- ⚠️ must add this setting! ! !
+  --   build = 'make',
+  --   event = 'VeryLazy',
+  --   version = false, -- Never set this value to "*"! Never!
+  --   ---@module 'avante'
+  --   ---@type avante.Config
+  --   opts = {
+  --     -- add any opts here
+  --     -- for example
+  --     provider = 'claude',
+  --     providers = {
+  --       claude = {
+  --         endpoint = 'https://api.anthropic.com',
+  --         model = 'claude-sonnet-4-20250514',
+  --         timeout = 30000, -- Timeout in milliseconds
+  --         extra_request_body = {
+  --           temperature = 0.75,
+  --           max_tokens = 20480,
+  --         },
+  --       },
+  --       moonshot = {
+  --         endpoint = 'https://api.moonshot.ai/v1',
+  --         model = 'kimi-k2-0711-preview',
+  --         timeout = 30000, -- Timeout in milliseconds
+  --         extra_request_body = {
+  --           temperature = 0.75,
+  --           max_tokens = 32768,
+  --         },
+  --       },
+  --     },
+  --   },
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'MunifTanjim/nui.nvim',
+  --     --- The below dependencies are optional,
+  --     'echasnovski/mini.pick', -- for file_selector provider mini.pick
+  --     'nvim-telescope/telescope.nvim', -- for file_selector provider telescope
+  --     'hrsh7th/nvim-cmp', -- autocompletion for avante commands and mentions
+  --     'ibhagwan/fzf-lua', -- for file_selector provider fzf
+  --     'stevearc/dressing.nvim', -- for input provider dressing
+  --     'folke/snacks.nvim', -- for input provider snacks
+  --     'nvim-tree/nvim-web-devicons', -- or echasnovski/mini.icons
+  --     'zbirenbaum/copilot.lua', -- for providers='copilot'
+  --     {
+  --       -- support for image pasting
+  --       'HakonHarnes/img-clip.nvim',
+  --       event = 'VeryLazy',
+  --       opts = {
+  --         -- recommended settings
+  --         default = {
+  --           embed_image_as_base64 = false,
+  --           prompt_for_file_name = false,
+  --           drag_and_drop = {
+  --             insert_mode = true,
+  --           },
+  --           -- required for Windows users
+  --           use_absolute_path = true,
+  --         },
+  --       },
+  --     },
+  --     -- WARN: render-markdown conflicts with obsidian
+  --     {
+  --       -- Make sure to set this up properly if you have lazy=true
+  --       'MeanderingProgrammer/render-markdown.nvim',
+  --       opts = {
+  --         -- file_types = { 'markdown', 'Avante' },
+  --         file_types = { 'Avante' },
+  --       },
+  --       -- ft = { 'markdown', 'Avante' },
+  --       ft = { 'Avante' },
+  --     },
+  --   },
+  -- },
   {
-    "epwalsh/obsidian.nvim",
-    version = "*", -- recommended, use latest release instead of latest commit
-    lazy = false,
-    ft = "markdown",
-    -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
-    -- event = {
-    --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
-    --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/*.md"
-    --   -- refer to `:h file-pattern` for more examples
-    --   "BufReadPre path/to/my-vault/*.md",
-    --   "BufNewFile path/to/my-vault/*.md",
-    -- },
-    dependencies = {
-      -- Required.
-      "nvim-lua/plenary.nvim",
-
-      -- see below for full list of optional dependencies 👇
-    },
+    "MeanderingProgrammer/render-markdown.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
     opts = {
-      workspaces = {
-        {
-          name = "tiktok",
-          path = "~/Obsidian/tiktok",
-        },
+      bullet = {
+        right_pad = 1,
       },
-
-      -- see below for full list of options 👇
     },
   },
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
