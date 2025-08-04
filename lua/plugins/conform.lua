@@ -52,6 +52,8 @@ return {
       -- is found.
       -- javascript = { { "prettierd", "prettier" } },
       terraform = { "terraform_fmt" },
+      -- https://github.com/DavidAnson/markdownlint/blob/v0.32.1/README.md#configuration
+      -- https://github.com/DavidAnson/markdownlint/blob/v0.32.1/schema/.markdownlint.yaml
       markdown = { "markdownlint-cli2" },
     },
   },

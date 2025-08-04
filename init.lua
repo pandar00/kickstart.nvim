@@ -9,10 +9,14 @@ vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 
--- NOTE: SQL related plugin maps C-c to completion causing conflicts with completion
+-- SQL related plugin maps C-c to completion causing conflicts with completion
 -- https://github.com/hrsh7th/nvim-compe/issues/286#issuecomment-805140394
 -- https://neovim.io/doc/user/ft_sql.html
 vim.g.omni_sql_no_default_maps = 1
+
+-- Disable markdown builtin style to override with editorconfig
+-- https://neovim.io/doc/user/filetype.html#ft-markdown-plugin
+vim.g.markdown_recommended_style = 0
 
 -- optionally enable 24-bit colour
 vim.opt.termguicolors = true
@@ -86,9 +90,10 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.expandtab = true
+-- Use editorconfig instead
+-- vim.opt.tabstop = 4
+-- vim.opt.shiftwidth = 4
+-- vim.opt.expandtab = true
 
 -- Column ruler
 -- https://neovim.io/doc/user/options.html#'colorcolumn'
@@ -124,15 +129,11 @@ end, { desc = "Go to next [D]iagnostic message" })
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 
--- greatest remap ever!
+-- Paste without replacing register
 -- https://www.youtube.com/watch?v=qZO9A5F6BZs
 vim.keymap.set("x", "<leader>p", '"_dP')
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
+-- This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set("t", "<C-\\>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
