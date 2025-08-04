@@ -9,7 +9,7 @@ vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 
--- NOTE: SQL related plugin maps C-c to completion
+-- NOTE: SQL related plugin maps C-c to completion causing conflicts with completion
 -- https://github.com/hrsh7th/nvim-compe/issues/286#issuecomment-805140394
 -- https://neovim.io/doc/user/ft_sql.html
 vim.g.omni_sql_no_default_maps = 1
