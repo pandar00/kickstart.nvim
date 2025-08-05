@@ -1,0 +1,31 @@
+vim.keymap.set("n", "<C-F1>", ":Neotree toggle<CR>")
+vim.keymap.set("n", "<C-F2>", ":Neotree action=show source=git_status position=left toggle=true<CR>")
+vim.keymap.set("n", "<C-F3>", ":Neotree action=show source=document_symbols position=left toggle=true<CR>")
+return {
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "nvim-tree/nvim-web-devicons", -- optional, but recommended
+    },
+    lazy = false, -- neo-tree will lazily load itself
+    use_default_mappings = true,
+    -- Defaults
+    -- https://github.com/nvim-neo-tree/neo-tree.nvim/blob/46fa0c22ca39e05fe15744102d21feb07fe9a94a/lua/neo-tree/defaults.lua#L501
+    opts = {
+      sources = {
+        "filesystem",
+        "buffers",
+        "git_status",
+        "document_symbols",
+      },
+      filesystem = {
+        filtered_items = {
+          visible = true, -- when true, they will just be displayed differently than normal items
+        },
+      },
+    },
+  },
+}

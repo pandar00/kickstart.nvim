@@ -227,8 +227,9 @@ require("lazy").setup({
   require("plugins.mini"), -- collection of various small independent plugins/modules
   require("plugins.neoscroll"), -- smooth scroll
   require("plugins.neotest"), -- test management
+  require("plugins.neo-tree"), -- test management
   require("plugins.nvim-lspconfig"), -- lsp common configs
-  require("plugins.nvim-tree"), -- tree menu
+  -- require("plugins.nvim-tree"), -- tree menu
   require("plugins.nvim-treesitter"), -- highlight, edit, and navigate code
   require("plugins.nvim-ts-autotag"), -- Automatically close tags
   require("plugins.nvim-ufo"), -- prettier collapse
