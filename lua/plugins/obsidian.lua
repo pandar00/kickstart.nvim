@@ -25,7 +25,7 @@ return {
     workspaces = {
       {
         name = "tiktok",
-        path = "~/Obsidian/tiktok",
+        path = "~/Documents/Obsidian Vault",
       },
     },
     ui = {
