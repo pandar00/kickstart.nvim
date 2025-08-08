@@ -115,6 +115,7 @@ return {
     vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]esume" })
     vim.keymap.set("n", "<leader>sj", builtin.jumplist, { desc = "[S]earch [J]umplist" })
     vim.keymap.set("n", "<leader>oo", ":Obsidian open<CR>", { desc = "[O]bsidian [O]pen" })
+    vim.keymap.set("n", "<leader>of", ":Obsidian follow_link<CR>", { desc = "[O]bsidian [O]pen" })
     vim.keymap.set("n", "<leader>ow", ":Obsidian workspace<CR>", { desc = "[O]bsidian [W]orkspace" })
     vim.keymap.set("n", "<leader>ot", ":Obsidian tags<CR>", { desc = "[O]bsidian [T]ags" })
     vim.keymap.set("n", "<leader>od", ":Obsidian today<CR>", { desc = "[O]bsidian [D]aily (:ObsidianToday)" })
