@@ -28,10 +28,6 @@ return {
         path = "~/Documents/Obsidian Vault",
       },
     },
-    ui = {
-      -- explicitly set to empty otherwise it'll conflict with render-markdown plugin
-      checkboxes = {},
-    },
     checkbox = {
       order = { " ", "x" },
     },
