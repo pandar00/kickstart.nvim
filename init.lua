@@ -160,6 +160,14 @@ vim.keymap.set("n", "+", [[<cmd>horizontal resize +2<cr>]]) -- make the window b
 vim.keymap.set("n", "_", [[<cmd>horizontal resize -2<cr>]]) -- make the window smaller horizontally by pressing shift and -
 
 -- [[ Basic Autocommands ]]
+-- Debug
+-- vim.api.nvim_create_autocmd("BufEnter", {
+--   desc = "DEBUG: BufEnter",
+--   group = vim.api.nvim_create_augroup("debug", { clear = true }),
+--   callback = function()
+--     print("BufEnter! " .. vim.fn.expand("%:p") .. vim.fn.strftime("%H:%M:%S"))
+--   end,
+-- })
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
