@@ -24,8 +24,8 @@ return {
     },
     workspaces = {
       {
-        name = "tiktok",
-        path = "~/Documents/Obsidian Vault",
+        name = "universe",
+        path = "~/Documents/universe",
       },
     },
     checkbox = {
