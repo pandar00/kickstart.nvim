@@ -17,6 +17,9 @@ return {
     -- see below for full list of optional dependencies 👇
   },
   opts = {
+    ui = {
+      enable = false,
+    },
     legacy_commands = false,
     completion = {
       nvim_cmp = false, -- if using nvim-cmp, otherwise set to false
@@ -27,6 +30,11 @@ return {
         name = "universe",
         path = "~/Documents/universe",
       },
+    },
+    daily_notes = {
+      -- Optional, if you keep daily notes in a separate directory.
+      folder = "notes/dailies",
+      workdays_only = true,
     },
     checkbox = {
       order = { " ", "x" },

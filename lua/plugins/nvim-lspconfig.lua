@@ -198,7 +198,8 @@ return {
       terraformls = {}, -- terraform
       jsonls = {},
       lua_ls = {},
-      gdtoolkit = {}, -- gdscript
+      groovyls = {},
+      jdtls = {},
     }
 
     -- local lspconfig = require 'lspconfig'

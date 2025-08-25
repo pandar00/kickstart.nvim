@@ -6,7 +6,7 @@ return {
   },
   lazy = false,
   config = function()
-    require("project_nvim").setup({
+    require("project").setup({
       -- NOTE:
       -- CWD switches back to the previous project if the selected project root cannot be found.
       -- LSP is loaded asynchrously so it's always going to fail to find the root on the

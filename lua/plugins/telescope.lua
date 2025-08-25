@@ -120,7 +120,7 @@ return {
     vim.keymap.set("n", "<leader>of", ":Obsidian follow_link<CR>", { desc = "[O]bsidian [F]ollow Link" })
     vim.keymap.set("n", "<leader>ow", ":Obsidian workspace<CR>", { desc = "[O]bsidian [W]orkspace" })
     vim.keymap.set("n", "<leader>ot", ":Obsidian tags<CR>", { desc = "[O]bsidian [T]ags" })
-    vim.keymap.set("n", "<leader>od", ":Obsidian today<CR>", { desc = "[O]bsidian [D]aily (:ObsidianToday)" })
+    vim.keymap.set("n", "<leader>od", ":Obsidian dailies<CR>", { desc = "[O]bsidian [D]aily (:ObsidianToday)" })
     vim.keymap.set("n", "<leader>so", ":Obsidian search<CR>", { desc = "[S]earch [O]bsidian" })
     vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
     vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
