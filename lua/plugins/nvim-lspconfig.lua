@@ -199,7 +199,7 @@ return {
       jsonls = {},
       lua_ls = {},
       groovyls = {},
-      jdtls = {},
+      jdtls = {}, -- java
     }
 
     -- local lspconfig = require 'lspconfig'
@@ -239,5 +239,6 @@ return {
     -- is bundled with Godot engine and mason-lspconfig only auto enables
     -- mason installed LSPs
     vim.lsp.enable("gdscript")
+    vim.lsp.enable("jdtls")
   end,
 }
