@@ -254,6 +254,7 @@ require("lazy").setup({
   require("plugins.vim-sleuth"), -- auto adjust shiftwidth/exandtab based on heuristic
   require("plugins.vim-tmux-navigator"), -- tmux integration
   require("plugins.vim-visual-multi"), -- nvim remote connection
+  require("plugins.vindent"), -- auto adjust shiftwidth/exandtab based on heuristic
   require("plugins.which-key"), -- key binding
 
   -- [[ Themes ]]
