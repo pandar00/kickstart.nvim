@@ -33,6 +33,7 @@ return {
         filtered_items = {
           visible = true, -- when true, they will just be displayed differently than normal items
         },
+        group_empty_dirs = true,
       },
     },
   },
