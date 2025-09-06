@@ -1,6 +1,7 @@
 vim.keymap.set("n", "<C-F1>", ":Neotree toggle<CR>")
 vim.keymap.set("n", "<C-F2>", ":Neotree action=show source=git_status position=left toggle=true<CR>")
 vim.keymap.set("n", "<C-F3>", ":Neotree action=show source=document_symbols position=left toggle=true<CR>")
+vim.keymap.set("n", "|", ":Neotree reveal<CR>")
 -- NeoTreeCursorLine
 -- NeoTreeCursorLine xxx links to CursorLine
 -- CursorLine     xxx guibg=#282c34
