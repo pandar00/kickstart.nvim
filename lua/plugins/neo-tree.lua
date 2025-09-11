@@ -36,6 +36,20 @@ return {
         },
         group_empty_dirs = true,
       },
+      window = {
+        mappings = {
+          ["F"] = {
+            function(state)
+              local node = state.tree:get_node()
+              local builtin = require("telescope.builtin")
+              builtin.live_grep({
+                search_dirs = { node.path },
+              })
+            end,
+            desc = "find in dir",
+          },
+        },
+      },
     },
   },
 }
