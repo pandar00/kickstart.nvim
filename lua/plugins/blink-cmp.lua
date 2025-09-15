@@ -175,7 +175,9 @@ return { -- Autocompletion
         "sort_text",
       },
       -- https://cmp.saghen.dev/configuration/reference.html#fuzzy
-      use_frecency = true,
+      frecency = {
+        enabled = true,
+      },
       implementation = "lua",
     },
 
