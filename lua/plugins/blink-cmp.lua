@@ -2,6 +2,10 @@ return { -- Autocompletion
   "saghen/blink.cmp",
   event = "VimEnter",
   version = "1.*",
+  -- Warning if not build/downloaded. Not sure why it doesn't download automatically
+  -- See blink.cmp manual for copying prebuilt
+  -- https://cmp.saghen.dev/installation#lazy-nvim
+  -- build = "cargo build --release",
   dependencies = {
     -- Snippet Engine
     {

@@ -39,6 +39,10 @@ return {
       -- Conform can also run multiple formatters sequentially
       python = { "autoflake", "isort", "black" },
 
+      -- note: JDTLS also comes with format option enabled by default
+      -- See LSP settings.java.format
+      java = {},
+
       yaml = { "yamlfmt" },
       -- Install https://github.com/fsouza/prettierd
       css = { "prettierd" },

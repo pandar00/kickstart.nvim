@@ -237,7 +237,12 @@ require("lazy").setup({
   require("plugins.neoscroll"), -- smooth scroll
   require("plugins.neotest"), -- test management
   require("plugins.neo-tree"), -- test management
+  require("plugins.nvim-jdtls"), -- java LSP
+  -- replaced by nvim-jdtls
+  -- require("plugins.nvim-java"), -- java LSP
+  require("plugins.nvim-lint"), --
   require("plugins.nvim-lspconfig"), -- lsp common configs
+  -- replaced by neo-tree
   -- require("plugins.nvim-tree"), -- tree menu
   require("plugins.nvim-treesitter"), -- highlight, edit, and navigate code
   require("plugins.nvim-ts-autotag"), -- Automatically close tags
@@ -247,6 +252,8 @@ require("lazy").setup({
   require("plugins.remote-nvim"), -- nvim remote connection
   require("plugins.render-markdown"), -- markdown rendering
   require("plugins.statuscol"), -- status column visualization
+  -- not working
+  -- require("plugins.sonarlint"),
   require("plugins.tailwind-tools"),
   require("plugins.telescope"), -- find everything
   require("plugins.todo-comments"), -- highlight todos

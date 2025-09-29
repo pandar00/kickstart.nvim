@@ -20,6 +20,16 @@ return {
     "nvim-treesitter/nvim-treesitter",
     "nvim-neotest/neotest-jest", -- Jest
     { "fredrikaverpil/neotest-golang", version = "*" }, -- Golang
+    {
+      "rcasia/neotest-java",
+      ft = "java",
+      dependencies = {
+        "mfussenegger/nvim-jdtls",
+        "mfussenegger/nvim-dap", -- for the debugger
+        "rcarriga/nvim-dap-ui", -- recommended
+        "theHamsta/nvim-dap-virtual-text", -- recommended
+      },
+    },
   },
   config = function()
     require("neotest").setup({
@@ -31,11 +41,18 @@ return {
             return vim.fn.getcwd()
           end,
         }),
+
         -- gotestsum replaces go test runner with structured output
         -- https://github.com/gotestyourself/gotestsum
         require("neotest-golang")({
           runner = "gotestsum",
         }), -- Golang Registration
+
+        -- Java
+        require("neotest-java")({
+          -- config here
+          default_version = "1.10.2",
+        }),
       },
       diagnostic = {
         enabled = false,
