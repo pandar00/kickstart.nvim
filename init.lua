@@ -254,7 +254,6 @@ require("lazy").setup({
   require("plugins.statuscol"), -- status column visualization
   -- not working
   -- require("plugins.sonarlint"),
-  require("plugins.tailwind-tools"),
   require("plugins.telescope"), -- find everything
   require("plugins.todo-comments"), -- highlight todos
   require("plugins.undotree"), -- Visualize undos
