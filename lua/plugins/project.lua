@@ -6,6 +6,8 @@ return {
   },
   lazy = false,
   config = function()
+    -- https://github.com/DrKJeff16/project.nvim/issues/24
+    vim.g.project_lsp_nowarn = 1
     require("project").setup({
       -- NOTE:
       -- CWD switches back to the previous project if the selected project root cannot be found.
