@@ -4,6 +4,9 @@ return { -- Autocompletion
   version = "1.*",
   -- Warning if not build/downloaded. Not sure why it doesn't download automatically
   -- See blink.cmp manual for copying prebuilt
+  --
+  -- `$data/lazy/blink.cmp/target/release/libblink_cmp_fuzzy.$ext`. Get the `$data`
+  -- path via `:echo stdpath('data')`. Use `.so` for linux, `.dylib` for mac, and
   -- https://cmp.saghen.dev/installation#lazy-nvim
   -- build = "cargo build --release",
   dependencies = {
