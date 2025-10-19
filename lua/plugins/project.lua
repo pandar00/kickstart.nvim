@@ -1,8 +1,12 @@
 return {
   "DrKJeff16/project.nvim",
+  -- Use "dir" for testing local plugin. Use :Lazy to check where plugin was loaded
+  -- dir = "<local directory>",
+  -- dev = true,
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-telescope/telescope.nvim",
+    "ibhagwan/fzf-lua",
   },
   lazy = false,
   config = function()
