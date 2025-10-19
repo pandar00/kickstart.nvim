@@ -8,7 +8,6 @@ return {
     "nvim-telescope/telescope.nvim",
     "ibhagwan/fzf-lua",
   },
-  lazy = false,
   config = function()
     -- https://github.com/DrKJeff16/project.nvim/issues/24
     vim.g.project_lsp_nowarn = 1
@@ -35,6 +34,9 @@ return {
       },
     })
     require("telescope").load_extension("projects")
+
+    local exts = require("telescope").extensions
+    vim.keymap.set("n", "<leader>sp", exts.projects.projects, { desc = "[S]earch [P]rojects" })
   end,
   -- opts = {},
 }
