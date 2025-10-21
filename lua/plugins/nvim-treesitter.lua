@@ -7,17 +7,20 @@ return {
     local langs = {
       "bash",
       "c",
+      "css",
       "diff",
+      "go",
       "html",
+      "java",
       "lua",
       "luadoc",
       "markdown",
-      "vim",
-      "vimdoc",
+      "python",
+      "svelte",
       "tsx",
       "typescript",
-      "css",
-      "go",
+      "vim",
+      "vimdoc",
     }
     require("nvim-treesitter").install(langs):wait(3000000) -- max. 5 min
 
