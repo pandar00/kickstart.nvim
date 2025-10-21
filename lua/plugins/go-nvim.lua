@@ -1,7 +1,7 @@
 return {
   -- Doc is go-nvim
-  -- 'ray-x/go.nvim',
-  "pandar00/go.nvim",
+  -- https://github.com/ray-x/go.nvim/issues/595
+  "ray-x/go.nvim",
   dependencies = { -- optional packages
     "ray-x/guihua.lua",
     "neovim/nvim-lspconfig",
