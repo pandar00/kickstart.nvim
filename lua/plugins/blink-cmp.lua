@@ -136,24 +136,25 @@ return { -- Autocompletion
         --     -- options for blink-cmp-avante
         --   },
         -- },
+        -- NOTE: higher to score, the more likely it appears top
         lazydev = {
           module = "lazydev.integrations.blink",
           score_offset = 100,
         },
         lsp = {
-          score_offset = 3,
+          -- score_offset = 3,
         },
         path = {
           min_keyword_length = 3,
-          score_offset = 2,
+          -- score_offset = 2,
         },
         snippets = {
           min_keyword_length = 2,
-          score_offset = 100,
+          -- score_offset = -100,
         },
         buffer = {
           min_keyword_length = 5,
-          score_offset = -3,
+          -- score_offset = 100,
         },
       },
       -- transform_items = function(_, items)
