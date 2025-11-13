@@ -45,6 +45,7 @@ return {
 
       yaml = { "yamlfmt" },
       -- Install https://github.com/fsouza/prettierd
+      svelte = { "prettierd" },
       css = { "prettierd" },
       typescript = { "prettierd" },
       typescriptreact = { "prettierd" },
