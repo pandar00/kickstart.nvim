@@ -17,6 +17,7 @@ return {
       "markdown",
       "python",
       "svelte",
+      "starlark",
       "tsx",
       "typescript",
       "vim",
