@@ -95,13 +95,14 @@ vim.opt.scrolloff = 10
 -- vim.opt.shiftwidth = 4
 -- vim.opt.expandtab = true
 
--- Column ruler
+-- Column ruler. Vertical line
 -- https://neovim.io/doc/user/options.html#'colorcolumn'
 vim.opt.colorcolumn = "100"
 
 -- https://github.com/epwalsh/obsidian.nvim
 -- https://github.com/epwalsh/obsidian.nvim/issues/286
-vim.opt.conceallevel = 2
+vim.opt.conceallevel = 3
+vim.g.markdown_syntax_conceal = 3
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -128,10 +129,19 @@ vim.keymap.set("n", "]d", function()
 end, { desc = "Go to next [D]iagnostic message" })
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+vim.diagnostic.config({
+  float = {
+    source = true,
+  },
+})
 
 -- Paste without replacing register
 -- https://www.youtube.com/watch?v=qZO9A5F6BZs
 vim.keymap.set("x", "<leader>p", '"_dp')
+
+-- snakecase camel
+-- blah_blah_blah blah_blah_blah
+vim.keymap.set("v", "<leader>cc", ":s/_\\(\\w\\)/\\U\\1/g<CR>")
 
 -- This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
