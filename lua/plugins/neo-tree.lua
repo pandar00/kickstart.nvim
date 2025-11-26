@@ -24,6 +24,12 @@ return {
     -- Defaults
     -- https://github.com/nvim-neo-tree/neo-tree.nvim/blob/46fa0c22ca39e05fe15744102d21feb07fe9a94a/lua/neo-tree/defaults.lua#L501
     opts = {
+      default_component_configs = {
+        file_size = {
+          -- file size overlaps with file
+          enabled = false,
+        },
+      },
       sources = {
         "filesystem",
         "buffers",
