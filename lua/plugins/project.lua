@@ -25,7 +25,9 @@ return {
       --    select a file
       --    buffer open buffer 1 -> AutoCommand on_buf_enter (iterates detection methods)
       --    buffer open buffer 2 -> AutoCommand on_buf_enter (iterates detection methods)
-      detection_methods = { "pattern", "lsp" },
+      -- NOTE: detection_methods is deprecated
+      -- detection_methods = { "pattern", "lsp" },
+      use_lsp = false,
       -- silent_chdir = false, -- for debugging
       patterns = {
         ".git",
