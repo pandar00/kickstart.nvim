@@ -32,6 +32,8 @@ return {
         }
       end
     end,
+    -- NOTE: Some LSPs may provide formatting capability out of the box
+    -- yamlls, for example, has yaml.format.enable config
     formatters_by_ft = {
       lua = { "stylua" },
       go = { "gofumpt", "goimports" },
@@ -43,7 +45,7 @@ return {
       -- See LSP settings.java.format
       java = {},
 
-      yaml = { "yamlfmt" },
+      -- yaml = { "yamlfmt" },
       -- Install https://github.com/fsouza/prettierd
       svelte = { "prettierd" },
       css = { "prettierd" },
@@ -51,7 +53,7 @@ return {
       typescriptreact = { "prettierd" },
       gdscript = { "gdformat" },
       html = { "prettierd" },
-      sql = { "sleek" },
+      sql = { "sleek", "sqlfmt" },
       --
       -- You can use a sub-list to tell conform to run *until* a formatter
       -- is found.
