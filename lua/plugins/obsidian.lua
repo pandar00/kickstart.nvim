@@ -1,4 +1,7 @@
-return {
+local workObsidianName = os.getenv("NEOVIM_WORK_OBSIDIAN_NAME")
+local workObsidianPath = os.getenv("NEOVIM_WORK_OBSIDIAN_PATH")
+
+local config = {
   "obsidian-nvim/obsidian.nvim",
   version = "*", -- recommended, use latest release instead of latest commit
   lazy = false, -- want to always be able to search notes
@@ -26,10 +29,10 @@ return {
       blink = true, -- if using nvim-cmp, otherwise set to false
     },
     workspaces = {
-      {
-        name = "universe",
-        path = "~/Documents/universe",
-      },
+      -- {
+      --   name = "snap",
+      --   path = "~/Documents/snap/",
+      -- },
     },
     daily_notes = {
       -- Optional, if you keep daily notes in a separate directory.
@@ -42,3 +45,12 @@ return {
     -- see below for full list of options 👇
   },
 }
+
+if workObsidianName ~= nil then
+  table.insert(config.opts.workspaces, {
+    name = workObsidianName,
+    path = workObsidianPath,
+  })
+end
+
+return config
