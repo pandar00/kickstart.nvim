@@ -46,6 +46,8 @@ return {
         -- https://github.com/gotestyourself/gotestsum
         require("neotest-golang")({
           runner = "gotestsum",
+          -- NOTE: shouldn't do this but dependencies have a lot of these
+          warn_test_name_dupes = false,
         }), -- Golang Registration
 
         -- Java
@@ -105,6 +107,9 @@ return {
       output = {
         enabled = true,
         open_on_run = true,
+        options = {
+          wrap = true,
+        },
       },
 
       output_panel = {
