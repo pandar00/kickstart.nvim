@@ -14,6 +14,8 @@ return {
     -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
     -- - sd'   - [S]urround [D]elete [']quotes
     -- - sr)'  - [S]urround [R]eplace [)] [']
+    -- NOTE: mini contains many "modules". Need to enable ones to use.
+    -- https://github.com/nvim-mini/mini.nvim
     require("mini.surround").setup()
 
     -- Simple and easy statusline.
