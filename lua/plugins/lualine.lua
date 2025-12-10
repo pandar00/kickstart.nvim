@@ -26,18 +26,17 @@ return {
           -- https://github.com/jdhao/nvim-config/blob/a602d9881982ec209218299bad200c98f53b2259/lua/config/lualine.lua#L206
           function()
             local msg = "No Active Lsp"
-            local buf_ft = vim.api.nvim_get_option_value("filetype", {})
             local clients = vim.lsp.get_clients({ bufnr = 0 })
             if next(clients) == nil then
               return msg
             end
-
+            -- multiple LSP can attach
+            local list = {}
             for _, client in ipairs(clients) do
-              ---@diagnostic disable-next-line: undefined-field
-              local filetypes = client.config.filetypes
-              if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
-                return client.name
-              end
+              table.insert(list, client.name)
+            end
+            if #list > 0 then
+              return table.concat(list, ",")
             end
             return msg
           end,
