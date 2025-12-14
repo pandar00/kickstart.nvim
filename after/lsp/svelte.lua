@@ -12,9 +12,9 @@ return {
           defaultScriptLanguage = "ts",
         },
         -- Note: Disabling it appears to disable linting TS in the svelte template
-        typescript = {
-          enable = false,
-        },
+        -- typescript = {
+        --   enable = false,
+        -- },
       },
     },
   },
