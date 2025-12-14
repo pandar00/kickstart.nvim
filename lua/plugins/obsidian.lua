@@ -29,10 +29,10 @@ local config = {
       blink = true, -- if using nvim-cmp, otherwise set to false
     },
     workspaces = {
-      -- {
-      --   name = "snap",
-      --   path = "~/Documents/snap/",
-      -- },
+      {
+        name = "universe",
+        path = "~/Documents/universe",
+      },
     },
     daily_notes = {
       -- Optional, if you keep daily notes in a separate directory.
