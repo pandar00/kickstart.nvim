@@ -11,7 +11,7 @@ return {
         svelte = {
           defaultScriptLanguage = "ts",
         },
-        -- Eslint conflicts. E.g) unused var warning
+        -- Note: Disabling it appears to disable linting TS in the svelte template
         typescript = {
           enable = false,
         },
