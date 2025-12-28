@@ -56,6 +56,23 @@ return {
           default_version = "1.10.2",
         }),
       },
+      discovery = {
+        enabled = true,
+        filter_dir = function(name, rel_path, root)
+          -- assumes go source is in the following dir
+          local goroot = "/usr/local/go/src"
+          if root:sub(1, #goroot) == goroot then
+            return false
+          end
+          -- assumes "venv" is at the root of the project (i.e. rel_path)
+          local venv = "venv"
+          if rel_path:sub(1, #venv) == venv then
+            return false
+          end
+          print(name .. "|" .. rel_path .. "|" .. root)
+          return true
+        end,
+      },
       diagnostic = {
         enabled = false,
       },
