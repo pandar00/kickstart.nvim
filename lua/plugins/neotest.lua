@@ -64,6 +64,10 @@ return {
           if root:sub(1, #goroot) == goroot then
             return false
           end
+          local gopkg = "/home/hcho/go/pkg/mod"
+          if root:sub(1, #gopkg) == gopkg then
+            return false
+          end
           -- assumes "venv" is at the root of the project (i.e. rel_path)
           local venv = "venv"
           if rel_path:sub(1, #venv) == venv then
@@ -95,10 +99,11 @@ return {
       -- NOTE: changing max_width changes the window width but the output is still
       -- splitted with a newline that doesn't fit in the window. It implies there
       -- the newline is filled from upstream
+      -- NOTE: this doesn't appear to do anything
       floating = {
         border = "rounded",
-        max_height = 0.6,
-        max_width = 0.6,
+        max_height = 0.6, -- output floating height
+        max_width = 0.6, -- output floating width
         options = {
           wrap = true,
         },
@@ -121,29 +126,18 @@ return {
         running = "",
         unknown = "?",
       },
+      -- Test output. I.e terminal output
       output = {
         enabled = true,
-        open_on_run = true,
-        options = {
-          wrap = true,
-        },
+        open_on_run = true, -- open it after running
       },
-
+      -- Output
       output_panel = {
         enabled = true,
         open = "bo split | resize 13",
       },
-      run = {
-        enabled = true,
-      },
       status = {
         enabled = true,
-      },
-      strategies = {
-        integrated = {
-          height = 40,
-          width = 120,
-        },
       },
       -- summary is the summary of all discovered tests in a tree
       summary = {
