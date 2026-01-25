@@ -238,6 +238,7 @@ require("lazy").setup({
   require("plugins.diffview"), -- better diff view
   require("plugins.gitsigns"),
   require("plugins.go-nvim"), -- golang support
+  require("plugins.helm-ls"), -- golang support
   require("plugins.image"), -- render image
   require("plugins.indent_line"),
   require("plugins.lazydev"),
