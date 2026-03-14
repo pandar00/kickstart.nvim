@@ -312,6 +312,7 @@ return { -- Autocompletion
   -- https://cmp.saghen.dev/installation#lazy-nvim
   -- build = "cargo build --release",
   dependencies = {
+    "Kaiser-Yang/blink-cmp-avante",
     -- Snippet Engine
     {
       "L3MON4D3/LuaSnip",
@@ -451,19 +452,19 @@ return { -- Autocompletion
     },
 
     sources = {
-      default = { "lsp", "path", "snippets", "lazydev" },
+      default = { "avante", "lsp", "path", "snippets", "lazydev" },
       per_filetype = {
         -- don't want AI assistance in markdown
         markdown = { "lsp", "path", "snippets", "lazydev" },
       },
       providers = {
-        -- avante = {
-        --   module = 'blink-cmp-avante',
-        --   name = 'Avante',
-        --   opts = {
-        --     -- options for blink-cmp-avante
-        --   },
-        -- },
+        avante = {
+          module = "blink-cmp-avante",
+          name = "Avante",
+          opts = {
+            -- options for blink-cmp-avante
+          },
+        },
         -- NOTE: higher to score, the more likely it appears top
         lazydev = {
           module = "lazydev.integrations.blink",
