@@ -234,6 +234,7 @@ require("lazy").setup({
   require("plugins.blink-cmp"), -- completion
   require("plugins.comment"), -- visual comment + 'gcc'
   require("plugins.conform"), -- autoformatter. h: conform-formatters
+  require("plugins.claudecode"), -- claude code integration
   require("plugins.debug"), -- debugger
   require("plugins.diffview"), -- better diff view
   require("plugins.gitsigns"),
