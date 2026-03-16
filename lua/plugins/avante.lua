@@ -11,9 +11,18 @@ return {
     -- add any opts here
     -- this file can contain specific instructions for your project
     instructions_file = "avante.md",
-    -- for example
-    -- mode = "legacy",
-    provider = "openai",
+    mode = "legacy",
+    provider = "claude-code",
+    acp_providers = {
+      ["claude-code"] = {
+        command = "npx",
+        args = { "@zed-industries/claude-code-acp" },
+        env = {
+          NODE_NO_WARNINGS = "1",
+          ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY"),
+        },
+      },
+    },
     providers = {
       -- ["mimo-v2-flash"] = {
       --   endpoint = "https://api.xiaomimimo.com/v1/chat/completions", -- The full endpoint of the provider
