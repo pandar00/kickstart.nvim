@@ -227,7 +227,7 @@ require("godot")
 require("lazy").setup({
   -- [[ Plugins ]]
   -- require("plugins.perfanno") -- benchmark lua
-  require("plugins.avante"), -- AI tool like cursor
+  -- require("plugins.avante"), -- AI tool like cursor
   -- require("plugins.hardtime"), -- adds gitsigns recommend keymaps
   -- require("plugins.lint"),
   require("plugins.autopairs"), -- pair parens/brackets/etc
@@ -238,7 +238,7 @@ require("lazy").setup({
   require("plugins.diffview"), -- better diff view
   require("plugins.gitsigns"),
   require("plugins.go-nvim"), -- golang support
-  require("plugins.helm-ls"), -- golang support
+  require("plugins.helm-ls"), -- helm charts
   require("plugins.image"), -- render image
   require("plugins.indent_line"),
   require("plugins.lazydev"),
