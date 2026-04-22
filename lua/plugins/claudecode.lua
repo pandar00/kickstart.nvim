@@ -32,4 +32,8 @@ return {
     { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
     { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
   },
+
+  diff_opts = {
+    keep_terminal_focus = true, -- If true, moves focus back to terminal after diff opens
+  },
 }

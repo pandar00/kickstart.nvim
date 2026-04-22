@@ -4,11 +4,4 @@ return {
   opts = {
     -- leave empty or see below
   },
-  settings = {
-    ["helm-ls"] = {
-      yamlls = {
-        path = "yaml-language-server",
-      },
-    },
-  },
 }

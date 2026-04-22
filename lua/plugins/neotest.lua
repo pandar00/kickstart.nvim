@@ -57,6 +57,7 @@ return {
         }),
       },
       discovery = {
+        concurrent = 1,
         enabled = true,
         filter_dir = function(name, rel_path, root)
           -- assumes go source is in the following dir
@@ -73,7 +74,8 @@ return {
           if rel_path:sub(1, #venv) == venv then
             return false
           end
-          print(name .. "|" .. rel_path .. "|" .. root)
+          -- print(name .. "|" .. rel_path .. "|" .. root)
+          -- models|tests/parser/bind/models|/home/hcho/Programming/git/echoapi
           return true
         end,
       },
@@ -108,11 +110,12 @@ return {
           wrap = true,
         },
       },
-      -- quickfix = {
-      --   open = function()
-      --     vim.api.nvim_command 'botright cwindow'
-      --   end,
-      -- },
+      quickfix = {
+        enabled = false,
+        -- open = function()
+        --   vim.api.nvim_command("botright cwindow")
+        -- end,
+      },
       icons = {
         child_indent = "│",
         child_prefix = "├",
