@@ -36,7 +36,7 @@ return {
     -- yamlls, for example, has yaml.format.enable config
     formatters_by_ft = {
       lua = { "stylua" },
-      go = { "gofumpt", "goimports" },
+      go = { "gofumpt", "goimports", "golines" },
       sh = { "shellcheck", "shfmt" },
       -- Conform can also run multiple formatters sequentially
       python = { "autoflake", "isort", "black" },
