@@ -118,26 +118,6 @@ return {
           })
         end
 
-        -- Not quite sure what documentHighlightProvider do but for Java, LSP has the capability
-        -- so we need to configure it to work.
-        -- https://github.com/isaksamsten/nvim-config/blob/bc67ae5decbbdcda3f9b13d5c61d22ee0896debc/lua/plugins/lsp.lua#L1
-        if client and client.server_capabilities.documentHighlightProvider then
-          vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
-          vim.api.nvim_clear_autocmds({ buffer = event.buf, group = "lsp_document_highlight" })
-          vim.api.nvim_create_autocmd("CursorHold", {
-            callback = vim.lsp.buf.document_highlight,
-            buffer = event.buf,
-            group = "lsp_document_highlight",
-            desc = "Document Highlight",
-          })
-          vim.api.nvim_create_autocmd("CursorMoved", {
-            callback = vim.lsp.buf.clear_references,
-            buffer = event.buf,
-            group = "lsp_document_highlight",
-            desc = "Clear All the References",
-          })
-        end
-
         -- -- The following code creates a keymap to toggle inlay hints in your
         -- -- code, if the language server you are using supports them
         -- --

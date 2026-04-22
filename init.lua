@@ -276,9 +276,9 @@ require("lazy").setup({
   require("plugins.which-key"), -- key binding
 
   -- [[ Themes ]]
-  require("themes.tokyonight"),
   require("themes.onedarkpro"),
-  require("themes.catppuccin"),
+  -- require("themes.tokyonight"), -- not used
+  -- require("themes.catppuccin"), -- not used
 
   -- The import below can automatically add your own plugins, configuration, etc
   -- from `lua/custom/plugins/*.lua`
