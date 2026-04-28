@@ -1,5 +1,5 @@
 return {
-  "echasnovski/mini.nvim",
+  "nvim-mini/mini.nvim",
   config = function()
     -- Better Around/Inside textobjects
     --
@@ -17,6 +17,8 @@ return {
     -- NOTE: mini contains many "modules". Need to enable ones to use.
     -- https://github.com/nvim-mini/mini.nvim
     require("mini.surround").setup()
+
+    require("mini.comment").setup()
 
     -- Simple and easy statusline.
     --  You could remove this setup call if you don't like it,

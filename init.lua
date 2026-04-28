@@ -232,7 +232,6 @@ require("lazy").setup({
   -- require("plugins.lint"),
   require("plugins.autopairs"), -- pair parens/brackets/etc
   require("plugins.blink-cmp"), -- completion
-  require("plugins.comment"), -- visual comment + 'gcc'
   require("plugins.conform"), -- autoformatter. h: conform-formatters
   require("plugins.claudecode"), -- claude code integration
   require("plugins.debug"), -- debugger

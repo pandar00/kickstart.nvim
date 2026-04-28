@@ -80,28 +80,8 @@ return {
         end,
       },
       diagnostic = {
-        enabled = false,
+        enabled = true,
       },
-      highlights = {
-        adapter_name = "NeotestAdapterName",
-        border = "NeotestBorder",
-        dir = "NeotestDir",
-        expand_marker = "NeotestExpandMarker",
-        failed = "NeotestFailed",
-        file = "NeotestFile",
-        focused = "NeotestFocused",
-        indent = "NeotestIndent",
-        namespace = "NeotestNamespace",
-        passed = "NeotestPassed",
-        running = "NeotestRunning",
-        skipped = "NeotestSkipped",
-        test = "NeotestTest",
-      },
-      -- floating changes the style of the floating window (e.g. output when 'o' is pressed)
-      -- NOTE: changing max_width changes the window width but the output is still
-      -- splitted with a newline that doesn't fit in the window. It implies there
-      -- the newline is filled from upstream
-      -- NOTE: this doesn't appear to do anything
       floating = {
         border = "rounded",
         max_height = 0.6, -- output floating height
@@ -110,55 +90,17 @@ return {
           wrap = true,
         },
       },
-      quickfix = {
-        enabled = false,
-        -- open = function()
-        --   vim.api.nvim_command("botright cwindow")
-        -- end,
-      },
-      icons = {
-        child_indent = "│",
-        child_prefix = "├",
-        collapsed = "─",
-        expanded = "╮",
-        failed = "✖",
-        final_child_indent = " ",
-        final_child_prefix = "╰",
-        non_collapsible = "─",
-        passed = "✔",
-        running = "",
-        unknown = "?",
-      },
-      -- Test output. I.e terminal output
+      -- per-test output
       output = {
         enabled = true,
         open_on_run = true, -- open it after running
       },
-      -- Output
+      -- output panel records all output of tests over time in a single window
       output_panel = {
         enabled = true,
         open = "bo split | resize 13",
       },
-      status = {
-        enabled = true,
-      },
       -- summary is the summary of all discovered tests in a tree
-      summary = {
-        enabled = true,
-        expand_errors = true,
-        follow = true,
-        mappings = {
-          attach = "a",
-          expand = { "<CR>", "<2-LeftMouse>" },
-          expand_all = "e",
-          jumpto = "i",
-          output = "o",
-          run = "r",
-          short = "O",
-          stop = "u",
-        },
-      },
-      open = "bo split | resize 13",
     })
   end,
 }
