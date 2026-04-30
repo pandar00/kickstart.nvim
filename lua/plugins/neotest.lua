@@ -90,6 +90,11 @@ return {
           wrap = true,
         },
       },
+
+      quickfix = {
+        enabled = true,
+        open = true,
+      },
       -- per-test output
       output = {
         enabled = true,

@@ -62,6 +62,8 @@ vim.opt.smartcase = true
 -- Keep signcolumn on by default
 vim.opt.signcolumn = "yes"
 
+vim.opt.showbreak = "󱞦 "
+
 -- Decrease update time
 vim.opt.updatetime = 250
 
